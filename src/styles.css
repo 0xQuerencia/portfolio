@@ -39,17 +39,21 @@ html, body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  --art-w: max(100vw, 200vh);
 }
 
-/* The piece is 2:1; size it to cover the viewport and centre it. */
+/* The piece is 2:1; size it to cover the viewport at any shape.
+   The component sets an inline width of 100%, so this needs !important to win.
+   The earth sits about 75% across the piece, so on tall screens slide the crop
+   to keep it in view, clamped so the piece never leaves a gap at either edge. */
 .backdrop > div,
 .backdrop ascii-art,
 .backdrop canvas {
   position: absolute;
-  left: 50%;
   top: 50%;
-  width: max(100vw, 200vh);
-  transform: translate(-50%, -50%);
+  left: clamp(100vw - var(--art-w), 50vw - 0.75 * var(--art-w), 0px);
+  width: var(--art-w) !important;
+  transform: translateY(-50%);
   line-height: 0;
 }
 
