@@ -146,12 +146,12 @@ export default function App() {
                       <p>{project.description}</p>
                       <div className="actions">
                         {project.url && (
-                          <a className="btn btn--fill btn--sm" href={project.url}>
+                          <a className="btn btn--fill btn--sm" href={project.url} target="_blank" rel="noopener noreferrer">
                             <ExternalIcon />
                             Visit Site
                           </a>
                         )}
-                        <a className="btn btn--dark btn--sm" href={project.repo}>
+                        <a className="btn btn--dark btn--sm" href={project.repo} target="_blank" rel="noopener noreferrer">
                           <GithubIcon />
                           Code
                         </a>
@@ -173,13 +173,13 @@ export default function App() {
                     </a>
                   </li>
                   <li>
-                    <a href="https://github.com/0xQuerencia">
+                    <a href="https://github.com/0xQuerencia" target="_blank" rel="noopener noreferrer">
                       <GithubIcon />
                       github
                     </a>
                   </li>
                   <li>
-                    <a href="https://instagram.com/querencia.wiz">
+                    <a href="https://instagram.com/querencia.wiz" target="_blank" rel="noopener noreferrer">
                       <InstagramIcon />
                       instagram
                     </a>
@@ -188,7 +188,7 @@ export default function App() {
               </div>
               <footer className="foot">
                 <p className="credit">
-                  Background: earthrise by <a href="https://github.com/bas3line/ascii">ascii.rest</a>,
+                  Background: earthrise by <a href="https://github.com/bas3line/ascii" target="_blank" rel="noopener noreferrer">ascii.rest</a>,
                   MIT licensed.
                 </p>
               </footer>
