@@ -108,7 +108,13 @@ export default function App() {
               <div className="about">
                 <h2 id="about-title" className="label">about me</h2>
                 <p>
-                  Hey there, I'm Ricky, also known online as <span className="hl">0xQuerencia</span>. I enjoy messing around with linux, building dev tools, ricing, and automation cuz I am lazy asf. And I mostly build whatever idea comes up in my mind at 3 am on a random tuesday.
+                  Hey there, I'm Ricky, also known online as <span className="hl">0xQuerencia</span>.
+                </p>
+                <p>
+                  I enjoy messing around with linux, building dev tools, ricing, and automation cuz I am lazy asf.
+                </p>
+                <p>
+                  And I mostly build whatever idea comes up in my mind at 3 am on a random tuesday.
                 </p>
               </div>
             </section>
