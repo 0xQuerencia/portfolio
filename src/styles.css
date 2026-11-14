@@ -378,3 +378,23 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
 }
+
+/* Phone design: one 20px gutter for every section, text low in the hero so the earth shows above it. */
+@media (max-width: 899px) {
+  .panel { align-items: stretch; padding: 104px 20px 72px; }
+  .hero { min-height: 100svh; justify-content: flex-end; padding-bottom: 88px; }
+  .hello { font-size: clamp(2.2rem, 11vw, 3.2rem); }
+  .tagline { margin: 1rem 0 1.75rem; font-size: 1rem; }
+  .btns { flex-direction: column; gap: 12px; }
+  .btns .btn { width: 100%; text-align: center; }
+  .about { width: 100%; padding: 22px; }
+  .about p { font-size: 1rem; line-height: 1.6; }
+  .projects { width: 100%; }
+  .grid { gap: 14px; }
+  .card { padding: 18px; }
+  .card p { font-size: 1rem; }
+  .contact-inner { max-width: none; }
+  .contact-title { font-size: 2.4rem; margin-bottom: 1.5rem; }
+  .contact-links a { font-size: 1.2rem; }
+  .foot { padding-top: 32px; }
+}
