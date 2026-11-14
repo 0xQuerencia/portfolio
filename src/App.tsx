@@ -41,15 +41,6 @@ const InstagramIcon = () => (
   </svg>
 );
 
-const interests = [
-  "Linux",
-  "developer tools",
-  "desktop environments",
-  "automation",
-  "artificial intelligence",
-  "the intersection of software and hardware",
-];
-
 export default function App() {
   const { outerRef, trackRef, goTo, active } = useHorizontalScroll(PANEL_COUNT);
 
@@ -117,21 +108,7 @@ export default function App() {
               <div className="about">
                 <h2 id="about-title" className="label">about me</h2>
                 <p>
-                  Hey, I'm Ricky, also known online as <span className="hl">0xQuerencia</span>.
-                </p>
-                <p>
-                  I'm a student, developer, and maker from India. I spend most of my time building
-                  software, experimenting with new technologies, and figuring out how things work.
-                </p>
-                <p>
-                  I'm particularly interested in{" "}
-                  {interests.map((item, i) => (
-                    <span key={item}>
-                      <span className="hl">{item}</span>
-                      {i < interests.length - 2 ? ", " : i === interests.length - 2 ? ", and " : ""}
-                    </span>
-                  ))}
-                  .
+                  Hey there, I'm Ricky, also known online as <span className="hl">0xQuerencia</span>. I enjoy messing around with linux, building dev tools, ricing, and automation cuz I am lazy asf. And I mostly build whatever idea comes up in my mind at 3 am on a random tuesday.
                 </p>
               </div>
             </section>
