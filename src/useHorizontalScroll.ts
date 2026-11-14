@@ -1,6 +1,8 @@
+import Lenis from "lenis";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const NARROW_QUERY = "(max-width: 899px)";
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 /**
  * Desktop: vertical scrolling drives a sideways track. The outer box is one viewport
@@ -10,7 +12,19 @@ const NARROW_QUERY = "(max-width: 899px)";
 export function useHorizontalScroll(panelCount: number) {
   const outerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
   const [active, setActive] = useState(0);
+
+  // Lenis smooths the real window scroll, so the scroll listener below keeps working unchanged.
+  useEffect(() => {
+    if (window.matchMedia(REDUCED_MOTION_QUERY).matches) return;
+    const lenis = new Lenis({ autoRaf: true });
+    lenisRef.current = lenis;
+    return () => {
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     const outer = outerRef.current;
@@ -55,15 +69,18 @@ export function useHorizontalScroll(panelCount: number) {
       const track = trackRef.current;
       if (!outer || !track) return;
 
+      const scrollTo = (top: number) =>
+        lenisRef.current ? lenisRef.current.scrollTo(top) : window.scrollTo({ top, behavior: "smooth" });
+
       if (window.matchMedia(NARROW_QUERY).matches) {
         const panel = track.children[index] as HTMLElement;
-        window.scrollTo({ top: panel.getBoundingClientRect().top + window.scrollY, behavior: "smooth" });
+        scrollTo(panel.getBoundingClientRect().top + window.scrollY);
         return;
       }
 
       const range = outer.offsetHeight - window.innerHeight;
       const outerTop = outer.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: outerTop + (range * index) / (panelCount - 1), behavior: "smooth" });
+      scrollTo(outerTop + (range * index) / (panelCount - 1));
     },
     [panelCount],
   );
