@@ -1,0 +1,201 @@
+import { Ascii } from "ascii.rest/react";
+import * as earthrise from "ascii.rest/pieces/earthrise";
+import { projects } from "./data";
+import { useHorizontalScroll } from "./useHorizontalScroll";
+
+const PANEL_COUNT = 4;
+// Panel indexes, in track order.
+const HOME = 0;
+const ABOUT = 1;
+const PROJECTS = 2;
+const CONTACT = 3;
+
+// Drawn icons, one stroke weight, in currentColor.
+const ExternalIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M15 3h6v6" />
+    <path d="M10 14 21 3" />
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+  </svg>
+);
+
+const GithubIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <path d="M17.5 6.5h.01" />
+  </svg>
+);
+
+const interests = [
+  "Linux",
+  "developer tools",
+  "desktop environments",
+  "automation",
+  "artificial intelligence",
+  "the intersection of software and hardware",
+];
+
+export default function App() {
+  const { outerRef, trackRef, goTo, active } = useHorizontalScroll(PANEL_COUNT);
+
+  const navLink = (label: string, index: number) => {
+    const isActive = index === active;
+    return (
+    <li>
+      <a
+        href={`#${label}`}
+        className={isActive ? "active" : undefined}
+        aria-current={isActive ? "page" : undefined}
+        onClick={(e) => {
+          e.preventDefault();
+          goTo(index);
+        }}
+      >
+        {label}
+      </a>
+    </li>
+    );
+  };
+
+  return (
+    <main>
+      {/* Fixed backdrop: the earthrise piece from ascii.rest (MIT) stays put while the panels slide. */}
+      <div className="backdrop" aria-hidden="true">
+        <Ascii piece={earthrise} label="" />
+      </div>
+      <div className="veil" aria-hidden="true" />
+      <div className="edge-fade" aria-hidden="true" />
+
+      <nav className="nav" aria-label="Main">
+        <span className="prompt">
+          0xque@home:~
+        </span>
+        <ul className="nav-links">
+          {navLink("home", HOME)}
+          {navLink("about", ABOUT)}
+          {navLink("projects", PROJECTS)}
+          {navLink("contact", CONTACT)}
+        </ul>
+      </nav>
+
+      <div className="h-outer" ref={outerRef}>
+        <div className="h-sticky">
+          <div className="h-track" ref={trackRef}>
+            <section className="panel hero" aria-label="Home">
+              <h1 className="hello">
+                hello, world.
+                <br />
+                i'm <span className="accent">0xque</span>
+              </h1>
+              <p className="tagline">I'd rather build it than pay for it.</p>
+              <div className="btns">
+                <button type="button" className="btn btn--primary" onClick={() => goTo(PROJECTS)}>
+                  view projects
+                </button>
+                <button type="button" className="btn" onClick={() => goTo(ABOUT)}>
+                  about me
+                </button>
+              </div>
+            </section>
+
+            <section className="panel" aria-labelledby="about-title">
+              <div className="about">
+                <h2 id="about-title" className="label">about me</h2>
+                <p>
+                  Hey, I'm Ricky, also known online as <span className="hl">0xQuerencia</span>.
+                </p>
+                <p>
+                  I'm a student, developer, and maker from India. I spend most of my time building
+                  software, experimenting with new technologies, and figuring out how things work.
+                </p>
+                <p>
+                  I'm particularly interested in{" "}
+                  {interests.map((item, i) => (
+                    <span key={item}>
+                      <span className="hl">{item}</span>
+                      {i < interests.length - 2 ? ", " : i === interests.length - 2 ? ", and " : ""}
+                    </span>
+                  ))}
+                  .
+                </p>
+              </div>
+            </section>
+
+            <section className="panel" aria-labelledby="projects-title">
+              <div className="projects">
+                <h2 id="projects-title" className="label">projects</h2>
+                <ul className="grid">
+                  {projects.map((project) => (
+                    <li className="card" key={project.name}>
+                      <h3>{project.name}</h3>
+                      <p>{project.description}</p>
+                      <div className="actions">
+                        {project.url && (
+                          <a className="btn btn--fill btn--sm" href={project.url}>
+                            <ExternalIcon />
+                            Visit Site
+                          </a>
+                        )}
+                        <a className="btn btn--dark btn--sm" href={project.repo}>
+                          <GithubIcon />
+                          Code
+                        </a>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+
+            <section className="panel contact" id="contact" aria-labelledby="contact-title">
+              <div className="contact-inner">
+                <h2 id="contact-title" className="contact-title">contact</h2>
+                <ul className="contact-links">
+                  <li>
+                    <a href="mailto:me@querencia.art">
+                      <MailIcon />
+                      me@querencia.art
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/0xQuerencia">
+                      <GithubIcon />
+                      github
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://instagram.com/querencia.wiz">
+                      <InstagramIcon />
+                      instagram
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <footer className="foot">
+                <p className="credit">
+                  Background: earthrise by <a href="https://github.com/bas3line/ascii">ascii.rest</a>,
+                  MIT licensed.
+                </p>
+              </footer>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

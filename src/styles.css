@@ -1,0 +1,380 @@
+:root {
+  --ink: #f2efe8;
+  --ink-soft: rgba(242, 239, 232, 0.72);
+  --accent: #4f9cff;
+  --surface: #13151b;
+  --surface-2: #1c1f27;
+  --surface-3: #272b35;
+  --line: rgba(242, 239, 232, 0.16);
+  --sans: "Pixelify Sans", "Inter", system-ui, sans-serif;
+  --accent-btn: #008bf5;
+  --accent-btn-hover: #0074d1;
+  --display: var(--sans);
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --gutter: 6.5vw;
+  --panels: 4;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: #05060a;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Background: fixed behind everything ----------------------------------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The piece is 2:1; size it to cover the viewport and centre it. */
+.backdrop > div,
+.backdrop ascii-art,
+.backdrop canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, 200vh);
+  transform: translate(-50%, -50%);
+  line-height: 0;
+}
+
+/* Darkens the left for legible text; the moon and earth stay visible. */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(5, 6, 10, 0.7) 0%, rgba(5, 6, 10, 0.25) 60%, rgba(5, 6, 10, 0.4) 100%);
+}
+
+/* Bottom edge: a gaussian blur that eases out gradually, with no hard line where it stops. */
+.edge-fade {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 42vh;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  mask-image: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.8) 22%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.15) 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.8) 22%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.15) 78%, transparent 100%);
+}
+
+/* Nav -------------------------------------------------------------------- */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px clamp(16px, var(--gutter), 120px);
+  font-size: 0.95rem;
+  background: linear-gradient(180deg, rgba(5, 6, 10, 0.92) 0%, rgba(5, 6, 10, 0.6) 70%, rgba(5, 6, 10, 0) 100%);
+}
+
+.prompt { color: var(--ink); font-family: var(--mono); }
+
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: clamp(18px, 3vw, 44px);
+}
+
+.nav-links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+/* The underline grows from the left when a section becomes active, and shrinks away from the old one. */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.nav-links a:hover { color: var(--ink); }
+
+.nav-links a:hover::after,
+.nav-links a.active::after { transform: scaleX(1); }
+
+.nav-links a.active { color: var(--ink); }
+
+/* Horizontal track ------------------------------------------------------- */
+
+/* One viewport of scroll per panel; the sticky box pins the view while the track slides. */
+.h-outer { height: calc(var(--panels) * 100vh); position: relative; z-index: 2; }
+
+.h-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.h-track {
+  display: flex;
+  width: calc(var(--panels) * 100vw);
+  height: 100%;
+  will-change: transform;
+}
+
+.panel {
+  flex: 0 0 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 96px var(--gutter) 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Hero ------------------------------------------------------------------- */
+
+.hello {
+  margin: 0;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 4.6vw, 4.4rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.accent { color: var(--accent); }
+
+.tagline {
+  margin: 1.4rem 0 2.2rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  color: var(--ink);
+}
+
+.btns { display: flex; flex-wrap: wrap; gap: 14px; }
+
+.btn {
+  display: inline-block;
+  padding: 1rem 2.2rem;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  outline: 1px dashed rgba(242, 239, 232, 0.4);
+  outline-offset: -1px;
+  color: var(--ink);
+  text-decoration: none;
+  font: inherit;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn--primary { background: var(--accent-btn); color: #f2f4f3; }
+
+/* Hover colours for the hero and contact buttons; project buttons have their own. */
+.btn:not(.btn--sm):hover { background: rgba(242, 239, 232, 0.08); }
+.btn--primary:not(.btn--sm):hover { background: var(--accent-btn-hover); }
+
+/* About ------------------------------------------------------------------ */
+
+.about {
+  max-width: 640px;
+  background: transparent;
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-radius: 4px;
+  outline: 1px dashed rgba(242, 239, 232, 0.4);
+  outline-offset: -7px;
+  padding: clamp(20px, 3vw, 32px);
+}
+
+.about p { margin: 0 0 1em; color: var(--ink-soft); }
+.about p:last-child { margin-bottom: 0; }
+
+.hl { color: var(--ink); font-weight: 500; }
+
+.label {
+  margin: 0 0 16px;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+/* Projects --------------------------------------------------------------- */
+
+.projects { width: 100%; max-width: 1100px; margin: 0 auto; }
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  background: transparent;
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-radius: 4px;
+  outline: 1px dashed rgba(242, 239, 232, 0.4);
+  outline-offset: -7px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.card p {
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  flex: 1;
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.btn--sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: 0;
+  border-radius: 4px;
+  color: #f2f4f3;
+  transition: background-color 0.15s ease;
+}
+
+.btn--fill { background: var(--accent-btn); color: #f2f4f3; }
+.btn--fill:hover { background: var(--accent-btn-hover); }
+
+.btn--dark { background: transparent; outline: 1px dashed rgba(242, 239, 232, 0.4); outline-offset: -1px; }
+.btn--dark:hover { background: rgba(242, 239, 232, 0.06); }
+
+/* Contact ---------------------------------------------------------------- */
+
+.contact { justify-content: center; }
+
+.contact-inner { max-width: 720px; margin: auto 0; }
+
+.contact-title {
+  margin: 0 0 2rem;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.contact-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2.2rem;
+}
+
+.contact-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  transition: color 0.15s ease;
+}
+
+.contact-links a:hover { color: var(--accent); }
+
+.contact-links svg { flex-shrink: 0; width: 28px; height: 28px; }
+
+/* Footer ----------------------------------------------------------------- */
+
+.foot { padding-top: 40px; font-size: 0.85rem; }
+
+.foot a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.foot a:hover { color: var(--ink); border-bottom-color: var(--accent); }
+
+.credit {
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.credit a { color: var(--ink-soft); }
+
+/* Narrow screens: one column, panels still slide sideways ---------------- */
+
+@media (max-width: 899px) {
+  .hello { font-size: clamp(2.2rem, 10.5vw, 3rem); }
+  .btns .btn { flex: 1 1 auto; text-align: center; }
+
+  .nav { justify-content: center; padding: 16px; background: linear-gradient(180deg, rgba(5, 6, 10, 0.98) 0%, rgba(5, 6, 10, 0.96) 80%, rgba(5, 6, 10, 0) 100%); }
+  .prompt { display: none; }
+  .nav-links { flex-wrap: wrap; justify-content: center; gap: 4px 10px; font-size: 0.8rem; }
+  .grid { grid-template-columns: 1fr; }
+  /* Phone: sections stack down the page instead of sliding sideways. */
+  .h-outer { height: auto; }
+  .h-sticky { position: static; height: auto; overflow: visible; }
+  .h-track { display: block; width: auto; height: auto; }
+  .panel {
+    flex: none;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 96px 16px 56px;
+    justify-content: flex-start;
+  }
+  .hero { min-height: 100svh; justify-content: center; }
+  .contact { min-height: 70svh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+}
