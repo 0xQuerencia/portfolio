@@ -39,9 +39,9 @@ export const projects: readonly Project[] = [
     repo: "https://github.com/0xQuerencia/ripple",
   },
   {
-    name: "synapse",
-    description:
-      "Decentralized P2P AI inference. Split a real model across machines, run inference together, reachable globally over libp2p.",
-    repo: "https://github.com/0xQuerencia/synapse",
+    name: "portfolio",
+    description: "This site lol",
+    url: "https://querencia.art",
+    repo: "https://github.com/0xQuerencia/portfolio",
   },
 ];
