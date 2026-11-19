@@ -1,16 +1,18 @@
 import { Ascii } from "ascii.rest/react";
 import * as earthrise from "ascii.rest/pieces/earthrise";
 import { projects } from "./data";
+import Labs from "./Labs";
 import { useHorizontalScroll } from "./useHorizontalScroll";
 
-const PANEL_COUNT = 4;
+const PANEL_COUNT = 5;
 // Panel indexes, in track order.
 const HOME = 0;
 const ABOUT = 1;
 const PROJECTS = 2;
-const CONTACT = 3;
+const LABS = 3;
+const CONTACT = 4;
 
-const PROMPT_PATHS = ["~", "~/about", "~/projects", "~/contact"] as const;
+const PROMPT_PATHS = ["~", "~/about", "~/projects", "~/labs", "~/contact"] as const;
 
 // Drawn icons, one stroke weight, in currentColor.
 const ExternalIcon = () => (
@@ -82,6 +84,7 @@ export default function App() {
           {navLink("home", HOME)}
           {navLink("about", ABOUT)}
           {navLink("projects", PROJECTS)}
+          {navLink("labs", LABS)}
           {navLink("contact", CONTACT)}
         </ul>
       </nav>
@@ -145,6 +148,10 @@ export default function App() {
                   ))}
                 </ul>
               </div>
+            </section>
+
+            <section className="panel panel--labs" id="labs" aria-labelledby="labs-title">
+              <Labs />
             </section>
 
             <section className="panel contact" id="contact" aria-labelledby="contact-title">
