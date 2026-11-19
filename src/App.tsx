@@ -10,6 +10,8 @@ const ABOUT = 1;
 const PROJECTS = 2;
 const CONTACT = 3;
 
+const PROMPT_PATHS = ["~", "~/about", "~/projects", "~/contact"] as const;
+
 // Drawn icons, one stroke weight, in currentColor.
 const ExternalIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -74,7 +76,7 @@ export default function App() {
 
       <nav className="nav" aria-label="Main">
         <span className="prompt">
-          0xque@home:~
+          0xque@home:<span className="prompt-path">{PROMPT_PATHS[active] ?? "~"}</span>
         </span>
         <ul className="nav-links">
           {navLink("home", HOME)}
