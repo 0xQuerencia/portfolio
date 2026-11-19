@@ -672,3 +672,10 @@ html, body {
   .contact-links a { font-size: 1.2rem; }
   .foot { padding-top: 32px; }
 }
+
+/* Small screens always stack the six bento tiles in reading order. */
+@media (max-width: 620px) {
+  .projects .grid { grid-template-columns: minmax(0, 1fr); }
+  .projects .card:nth-child(n) { grid-column: 1; grid-row: auto; min-height: 190px; }
+  .projects .card:nth-child(1) { min-height: 270px; }
+}
