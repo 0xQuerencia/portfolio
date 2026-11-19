@@ -128,8 +128,12 @@ export default function App() {
               <div className="projects">
                 <h2 id="projects-title" className="label">projects</h2>
                 <ul className="grid">
-                  {projects.map((project) => (
+                  {projects.map((project, index) => (
                     <li className="card" key={project.name}>
+                      <div className="card-eyebrow" aria-hidden="true">
+                        <span>0{index + 1} / {index === 0 ? "featured" : "selected"}</span>
+                        <span className="card-spark">✳</span>
+                      </div>
                       <h3>{project.name}</h3>
                       <p>{project.description}</p>
                       <div className="actions">
