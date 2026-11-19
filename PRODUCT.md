@@ -32,10 +32,10 @@ The owner's own line: "I'd rather build it than pay for it." The site presents s
 
 ## Capabilities and Constraints
 
-- Single-page site: a hero, an about section, a featured-projects section, and a contact footer. The sections scroll sideways as one panel each.
-- Project data is hardcoded in `src/data.ts` (six pinned repos: synapse, pixie, ripple, pixl, aether, x). It does not update from GitHub automatically.
+- Single-page site: home, about, featured projects, Labs, and contact. The sections scroll sideways on desktop and stack vertically on mobile. The terminal prompt follows the active section.
+- Featured projects remain curated in `src/data.ts`. Labs fetches public GitHub repositories and public coding events in the browser, displaying unarchived, non-fork repositories with activity in the previous 30 days, most recent first. Successful results are cached locally for 30 minutes and the section degrades gracefully if GitHub becomes unavailable. Repo pushes alone do not prove who worked on the code.
 - Background is the earthrise piece from ascii.rest (MIT), rendered as a fixed layer.
-- Undecided: whether a "lab" section will exist. The nav currently has a "lab" link that points at the about section.
+- Heading and navigation typography uses Pixelify Sans; paragraph and card copy use JetBrains Mono.
 
 ## Brand Commitments
 
