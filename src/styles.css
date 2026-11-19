@@ -98,6 +98,7 @@ html, body {
 }
 
 .prompt { color: var(--ink); font-family: var(--mono); }
+.prompt-path { color: var(--accent); }
 
 .nav-links {
   list-style: none;
@@ -360,8 +361,8 @@ html, body {
   .hello { font-size: clamp(2.2rem, 10.5vw, 3rem); }
   .btns .btn { flex: 1 1 auto; text-align: center; }
 
-  .nav { justify-content: center; padding: 16px; background: linear-gradient(180deg, rgba(5, 6, 10, 0.98) 0%, rgba(5, 6, 10, 0.96) 80%, rgba(5, 6, 10, 0) 100%); }
-  .prompt { display: none; }
+  .nav { flex-direction: column; justify-content: center; gap: 2px; padding: 10px 16px; background: linear-gradient(180deg, rgba(5, 6, 10, 0.98) 0%, rgba(5, 6, 10, 0.96) 80%, rgba(5, 6, 10, 0) 100%); }
+  .prompt { display: block; font-size: 0.82rem; line-height: 1.35; white-space: nowrap; }
   .nav-links { flex-wrap: wrap; justify-content: center; gap: 4px 10px; font-size: 0.8rem; }
   .grid { grid-template-columns: 1fr; }
   /* Phone: sections stack down the page instead of sliding sideways. */
