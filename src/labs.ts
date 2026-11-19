@@ -1,5 +1,6 @@
 export const GITHUB_USER = "0xQuerencia";
-export const LAB_WINDOW_DAYS = 30;
+export const LAB_WINDOW_DAYS = 14;
+export const LAB_MAX_PROJECTS = 3;
 
 const DAY = 24 * 60 * 60 * 1000;
 const OWNER = GITHUB_USER.toLowerCase();
@@ -35,6 +36,7 @@ export interface LabProject {
   lastActivity: string;
   activityCount: number;
   hasPersonalActivity: boolean;
+  activityScore: number;
 }
 
 function recentTimestamp(value: string | null | undefined, cutoff: number, now: number) {
@@ -90,6 +92,8 @@ export function deriveLabProjects(
   return repositories
     .filter((repo) =>
       repo.owner?.login?.toLowerCase() === OWNER &&
+      repo.name.toLowerCase() !== "portfolio" &&
+      repo.name.toLowerCase() !== OWNER &&
       !repo.fork && !repo.archived && !repo.disabled && !repo.private
     )
     .map((repo) => {
@@ -106,14 +110,16 @@ export function deriveLabProjects(
         lastActivity: new Date(latest).toISOString(),
         activityCount: event?.count ?? 0,
         hasPersonalActivity: Boolean(event),
+        activityScore:
+          (event?.count ?? 0) * 6 +
+          (push ? 2 : 0) +
+          Math.max(0, LAB_WINDOW_DAYS - (now - latest) / DAY),
       } satisfies LabProject;
     })
     .filter((project): project is LabProject => project !== null)
-    .sort((a, b) => {
-      if (a.hasPersonalActivity !== b.hasPersonalActivity) {
-        const gap = Math.abs(Date.parse(a.lastActivity) - Date.parse(b.lastActivity));
-        if (gap < 2 * DAY) return Number(b.hasPersonalActivity) - Number(a.hasPersonalActivity);
-      }
-      return Date.parse(b.lastActivity) - Date.parse(a.lastActivity);
-    });
+    .sort((a, b) =>
+      b.activityScore - a.activityScore ||
+      Date.parse(b.lastActivity) - Date.parse(a.lastActivity)
+    )
+    .slice(0, LAB_MAX_PROJECTS);
 }
