@@ -9,10 +9,10 @@ export interface Project {
 
 export const projects: readonly Project[] = [
   {
-    name: "x",
-    description: "Hex, but it also does stuff. Dictation for Linux.",
-    url: "https://x.querencia.art",
-    repo: "https://github.com/0xQuerencia/x",
+    name: "pixl",
+    description: "Ship real projects inside a 2D world, earn Pixels, unlock real prizes.",
+    url: "https://pixl.hackclub.com",
+    repo: "https://github.com/hackclub/pixl",
   },
   {
     name: "aether",
@@ -21,16 +21,16 @@ export const projects: readonly Project[] = [
     repo: "https://github.com/0xQuerencia/aether",
   },
   {
+    name: "x",
+    description: "Hex, but it also does stuff. Dictation for Linux.",
+    url: "https://x.querencia.art",
+    repo: "https://github.com/0xQuerencia/x",
+  },
+  {
     name: "pixie",
     description: "A Slack support bot for Hack Club programs.",
     url: "https://pixie.support",
     repo: "https://github.com/0xQuerencia/pixie",
-  },
-  {
-    name: "pixl",
-    description: "Ship real projects inside a 2D world, earn Pixels, unlock real prizes.",
-    url: "https://pixl.hackclub.com",
-    repo: "https://github.com/hackclub/pixl",
   },
   {
     name: "ripple",
