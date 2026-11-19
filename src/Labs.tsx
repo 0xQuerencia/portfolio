@@ -3,13 +3,14 @@ import {
   deriveLabProjects,
   GITHUB_USER,
   LAB_WINDOW_DAYS,
+  LAB_MAX_PROJECTS,
   type GitHubActivity,
   type GitHubRepository,
   type LabProject,
 } from "./labs";
 
 const REFRESH_MS = 30 * 60 * 1000;
-const STORAGE_KEY = "0xque:labs:v1";
+const STORAGE_KEY = "0xque:labs:v2";
 
 interface Snapshot {
   items: LabProject[];
@@ -124,90 +125,121 @@ export default function Labs() {
     };
   }, []);
 
+  const items = state.status === "ready" ? state.snapshot.items : [];
+  const focus = items[0];
+  const queue = items.slice(1);
+
   return (
     <div className="labs">
-      <div className="labs-heading">
+      <header className="labs-heading">
         <div>
-          <h2 id="labs-title" className="label">labs</h2>
-          <p className="labs-intro">stuff i've been working on lately, straight from github.</p>
+          <p className="lab-kicker">/ workspace · public github activity</p>
+          <h2 id="labs-title" className="label">labs<span className="lab-cursor">_</span></h2>
+          <p className="labs-intro">what's on my desk lately.</p>
         </div>
-        <a
-          className="labs-profile"
-          href={`https://github.com/${GITHUB_USER}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          github ↗
-        </a>
-      </div>
-      <p className="labs-source" aria-live="polite">
-        {state.status === "loading" && "checking recent public activity…"}
-        {state.status === "error" && "github activity is unavailable right now."}
-        {state.status === "ready" && (
-          <>
-            public activity from the last {LAB_WINDOW_DAYS} days · synced{" "}
-            <time dateTime={new Date(state.snapshot.fetchedAt).toISOString()}>
-              {new Date(state.snapshot.fetchedAt).toLocaleString(undefined, {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-            </time>
-            {state.stale ? " · showing cached results" : ""}
-            {!state.snapshot.eventsAvailable ? " · based on repo updates" : ""}
-          </>
-        )}
-      </p>
-      {state.status === "ready" && state.snapshot.items.length > 0 && (
-        <ul className="labs-grid">
-          {state.snapshot.items.map((project) => (
-            <li className="lab-card" key={project.repoUrl}>
-              <div className="lab-card-top">
-                <h3>{project.name}</h3>
-                <span className="lab-recency">
-                  <time dateTime={project.lastActivity}>{relativeDate(project.lastActivity)}</time>
-                </span>
-              </div>
-              <p className="lab-description">
-                {project.description || "no description yet."}
-              </p>
-              <div className="lab-meta">
-                {project.language && <span>{project.language}</span>}
-                <span>
-                  {project.hasPersonalActivity
-                    ? `${project.activityCount} public action${project.activityCount === 1 ? "" : "s"}`
-                    : "repo updated"}
-                </span>
-              </div>
-              <div className="actions">
-                <a className="btn btn--dark btn--sm" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                  code ↗
-                </a>
-                {project.homepage && (
-                  <a className="btn btn--fill btn--sm" href={project.homepage} target="_blank" rel="noopener noreferrer">
-                    site ↗
-                  </a>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-      {state.status === "ready" && state.snapshot.items.length === 0 && (
-        <p className="labs-empty">
-          no public repo updates in the last {LAB_WINDOW_DAYS} days. see github for the full archive.
-        </p>
+        <div className="lab-status">
+          <span className="lab-live-dot" aria-hidden="true" />
+          <span>recent work</span>
+        </div>
+      </header>
+
+      {state.status === "loading" && (
+        <p className="labs-empty" role="status">checking my recent github activity…</p>
       )}
       {state.status === "error" && (
         <p className="labs-empty">
-          you can still browse my projects on{" "}
+          github's not responding right now.{" "}
           <a href={`https://github.com/${GITHUB_USER}?tab=repositories`} target="_blank" rel="noopener noreferrer">
-            github ↗
+            browse repos ↗
           </a>
         </p>
       )}
-      <p className="labs-note">
-        inferred from public pushes and coding events. recent activity doesn't always mean a project is actively in development.
-      </p>
+
+      {focus && (
+        <div className="lab-workspace" aria-label="What I'm working on">
+          <article className="lab-focus">
+            <div className="lab-focus-top">
+              <span className="lab-eyebrow">01 / on the bench</span>
+              <span className="lab-focus-indicator">● recent activity</span>
+            </div>
+            <p className="lab-path">~/labs/{focus.name}</p>
+            <h3>{focus.name}</h3>
+            <p className="lab-focus-description">{focus.description || "figuring this one out as i go."}</p>
+            <div className="lab-focus-bottom">
+              <div className="lab-focus-meta">
+                {focus.language && <span>{focus.language}</span>}
+                <span>
+                  {focus.hasPersonalActivity ? "public coding activity" : "repo updated"} ·{" "}
+                  <time dateTime={focus.lastActivity}>{relativeDate(focus.lastActivity)}</time>
+                </span>
+              </div>
+              <a href={focus.repoUrl} target="_blank" rel="noopener noreferrer" className="lab-focus-link">
+                view repo <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+          <div className="lab-queue">
+            <div className="lab-queue-heading">
+              <span>also on the bench</span>
+              <span>{String(queue.length).padStart(2, "0")} / {String(LAB_MAX_PROJECTS - 1).padStart(2, "0")}</span>
+            </div>
+            {queue.length ? (
+              <ol className="lab-queue-list">
+                {queue.map((project, index) => (
+                  <li key={project.repoUrl}>
+                    <a className="lab-queue-link" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                      <span className="lab-queue-number">0{index + 2}</span>
+                      <span className="lab-queue-main">
+                        <strong>{project.name}</strong>
+                        <span className="lab-queue-description">{project.description || "something in progress."}</span>
+                        <span className="lab-queue-date">
+                          {project.language ? `${project.language} · ` : ""}
+                          <time dateTime={project.lastActivity}>{relativeDate(project.lastActivity)}</time>
+                        </span>
+                      </span>
+                      <span className="lab-queue-arrow" aria-hidden="true">↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="lab-queue-empty">room for the next idea.</p>
+            )}
+            <a
+              className="lab-all-link"
+              href={`https://github.com/${GITHUB_USER}?tab=repositories`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              all repositories <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      )}
+
+      {state.status === "ready" && items.length === 0 && (
+        <p className="labs-empty">
+          nothing active in public repos over the last {LAB_WINDOW_DAYS} days.{" "}
+          <a href={`https://github.com/${GITHUB_USER}`} target="_blank" rel="noopener noreferrer">
+            see github ↗
+          </a>
+        </p>
+      )}
+
+      {state.status === "ready" && (
+        <p className="labs-source" aria-live="polite">
+          showing up to {LAB_MAX_PROJECTS} repositories · last {LAB_WINDOW_DAYS} days · checked{" "}
+          <time dateTime={new Date(state.snapshot.fetchedAt).toISOString()}>
+            {new Date(state.snapshot.fetchedAt).toLocaleString(undefined, {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </time>
+          {state.stale ? " · cached snapshot" : ""}
+          {!state.snapshot.eventsAvailable ? " · repo updates only" : ""}
+          <span className="lab-caveat"> · inferred from public activity, not a work-status declaration</span>
+        </p>
+      )}
     </div>
   );
 }
