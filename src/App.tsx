@@ -2,6 +2,7 @@ import { Ascii } from "ascii.rest/react";
 import * as earthrise from "ascii.rest/pieces/earthrise";
 import { projects } from "./data";
 import Labs from "./Labs";
+import PixlPreview from "./PixlPreview";
 import { useHorizontalScroll } from "./useHorizontalScroll";
 
 const PANEL_COUNT = 5;
@@ -155,11 +156,7 @@ export default function App() {
                           </a>
                         </div>
                       </div>
-                      {project.name === "pixl" && (
-                        <div className="project-preview" aria-label="PIXL preview placeholder">
-                          [pixl screenshot or short GIF]
-                        </div>
-                      )}
+                      {project.name === "pixl" && <PixlPreview />}
                     </li>
                   ))}
                 </ul>
