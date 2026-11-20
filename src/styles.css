@@ -257,7 +257,7 @@ html, body {
     "featured banner banner"
     "featured middle-left middle-right"
     "wide wide corner";
-  height: clamp(510px, 67vh, 670px);
+  height: clamp(460px, 67vh, 650px);
 }
 
 .project-tile {
@@ -268,7 +268,7 @@ html, body {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  padding: clamp(15px, 1.65vw, 25px);
+  padding: clamp(14px, 1.45vw, 21px);
   border: 1px solid rgba(211, 223, 244, 0.20);
   border-radius: 10px;
   color: var(--ink);
@@ -323,7 +323,7 @@ html, body {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   color: rgba(224, 233, 246, 0.62);
   font: 500 0.66rem / 1.2 var(--mono);
   letter-spacing: 0.05em;
@@ -342,7 +342,7 @@ html, body {
 }
 
 .project-tile p {
-  margin: 0 0 13px;
+  margin: 0 0 10px;
   max-width: 33ch;
   color: rgba(242, 239, 232, 0.78);
   font: 400 clamp(0.8rem, 0.95vw, 0.96rem) / 1.5 var(--mono);
@@ -363,8 +363,8 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 34px;
-  padding: 0.43rem 0.76rem;
+  min-height: 32px;
+  padding: 0.39rem 0.66rem;
   border-radius: 5px;
   font: 500 clamp(0.68rem, 0.82vw, 0.8rem) / 1.2 var(--mono);
   text-decoration: none;
