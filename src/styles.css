@@ -252,7 +252,7 @@ html, body {
   grid-template-areas:
     "featured banner banner"
     "featured middle-left middle-right"
-    "wide wide corner";
+    "wide wide .";
   gap: 16px;
   height: clamp(630px, 72vh, 720px);
   padding: 0;
@@ -280,11 +280,10 @@ html, body {
 }
 
 .project-card--pixl { grid-area: featured; }
-.project-card--aether { grid-area: banner; }
-.project-card--x { grid-area: middle-left; }
+.project-card--aether { grid-area: middle-left; }
+.project-card--x { grid-area: banner; }
 .project-card--pixie { grid-area: middle-right; }
 .project-card--ripple { grid-area: wide; }
-.project-card--portfolio { grid-area: corner; }
 
 .project-card-content {
   display: flex;
@@ -321,8 +320,7 @@ html, body {
   gap: 7px;
   margin-bottom: 14px;
 }
-.project-tags span,
-.project-here {
+.project-tags span {
   display: inline-flex;
   align-items: center;
   padding: 3px 8px;
@@ -414,11 +412,10 @@ html, body {
       "banner banner"
       "middle-left middle-right"
       "wide wide"
-      "corner corner";
+      ". .";
   }
   .project-card { min-height: 235px; padding: 20px; }
   .project-card--pixl { min-height: 385px; }
-  .project-card--portfolio { min-height: 155px; }
 }
 
 @media (max-width: 620px) {
@@ -430,7 +427,7 @@ html, body {
       "middle-left"
       "middle-right"
       "wide"
-      "corner";
+      ".";
   }
   .project-card { min-height: 210px; }
   .project-card--pixl { min-height: 440px; }
