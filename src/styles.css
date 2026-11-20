@@ -247,13 +247,14 @@ html, body {
 
 .project-bento {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 0.68fr) minmax(0, 1fr);
-  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   grid-template-areas:
-    "pixl aether x"
-    "ripple aether pixie";
+    "pixl x x"
+    "pixl aether pixie"
+    "ripple ripple pixie";
   gap: 16px;
-  height: clamp(660px, 75vh, 760px);
+  height: clamp(660px, 72vh, 720px);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -279,11 +280,7 @@ html, body {
 }
 
 .project-card--pixl { grid-area: pixl; }
-.project-card--aether {
-  grid-area: aether;
-  align-self: center;
-  height: clamp(210px, 28vh, 270px);
-}
+.project-card--aether { grid-area: aether; }
 .project-card--x { grid-area: x; }
 .project-card--pixie { grid-area: pixie; }
 .project-card--ripple { grid-area: ripple; }
@@ -412,17 +409,12 @@ html, body {
     grid-template-rows: none;
     grid-template-areas:
       "pixl x"
-      "aether aether"
+      "pixl aether"
       "ripple pixie";
   }
   .project-card { min-height: 235px; padding: 20px; }
   .project-card--pixl { min-height: 385px; }
-  .project-card--aether {
-    width: min(100%, 440px);
-    justify-self: center;
-    height: auto;
-    min-height: 205px;
-  }
+  .project-card--aether { min-height: 205px; }
 }
 
 @media (max-width: 620px) {
@@ -437,7 +429,6 @@ html, body {
   }
   .project-card { min-height: 210px; }
   .project-card--pixl { min-height: 440px; }
-  .project-card--aether { width: 100%; }
 }
 
 /* Labs: a compact workbench, deliberately unlike the Projects bento. -- */
