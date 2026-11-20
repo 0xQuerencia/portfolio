@@ -242,19 +242,20 @@ html, body {
 
 /* Projects: original dark dashed cards, reference bento placement only. */
 
-.projects { width: 100%; max-width: 1180px; margin: 0 auto; }
+.projects { width: 100%; max-width: 760px; margin: 0 auto; }
 .projects > .label { margin-bottom: 18px; }
 
 .project-bento {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(3, minmax(0, 1fr));
   grid-template-areas:
     "pixl x x"
     "pixl aether pixie"
     "ripple ripple pixie";
   gap: 16px;
-  height: clamp(660px, 72vh, 720px);
+  aspect-ratio: 1;
+  height: auto;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -492,6 +493,7 @@ html, body {
 @media (max-width: 899px) {
   .project-bento {
     height: auto;
+    aspect-ratio: auto;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: none;
     grid-template-areas:
