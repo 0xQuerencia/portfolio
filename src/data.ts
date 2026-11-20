@@ -15,16 +15,16 @@ export const projects: readonly Project[] = [
     repo: "https://github.com/hackclub/pixl",
   },
   {
-    name: "aether",
-    description: "My Quickshell island for Hyprland.",
-    url: "https://0xquerencia.github.io/aether/",
-    repo: "https://github.com/0xQuerencia/aether",
-  },
-  {
     name: "x",
     description: "Hex, but it also does stuff. Dictation for Linux.",
     url: "https://x.querencia.art",
     repo: "https://github.com/0xQuerencia/x",
+  },
+  {
+    name: "aether",
+    description: "My Quickshell island for Hyprland.",
+    url: "https://0xquerencia.github.io/aether/",
+    repo: "https://github.com/0xQuerencia/aether",
   },
   {
     name: "pixie",
@@ -37,11 +37,5 @@ export const projects: readonly Project[] = [
     description: "Cause and effect simulation. Answers your WHAT IF questions.",
     url: "https://ripple.querencia.art",
     repo: "https://github.com/0xQuerencia/ripple",
-  },
-  {
-    name: "portfolio",
-    description: "This site lol",
-    url: "https://querencia.art",
-    repo: "https://github.com/0xQuerencia/portfolio",
   },
 ];
