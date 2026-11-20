@@ -2,7 +2,6 @@ import { Ascii } from "ascii.rest/react";
 import * as earthrise from "ascii.rest/pieces/earthrise";
 import { projects } from "./data";
 import Labs from "./Labs";
-import ProjectArt from "./ProjectArt";
 import { useHorizontalScroll } from "./useHorizontalScroll";
 
 const PANEL_COUNT = 5;
@@ -15,15 +14,15 @@ const CONTACT = 4;
 
 const PROMPT_PATHS = ["~", "~/about", "~/projects", "~/labs", "~/contact"] as const;
 
-// Drawn icons, one stroke weight, in currentColor.
-const ExternalIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M15 3h6v6" />
-    <path d="M10 14 21 3" />
-    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-  </svg>
-);
+const PROJECT_TAGS: Record<string, readonly string[]> = {
+  pixl: ["2D world", "Pixels"],
+  aether: ["Hyprland", "Quickshell"],
+  x: ["Linux", "dictation"],
+  pixie: ["Slack", "bot"],
+  ripple: ["simulation"],
+};
 
+// Drawn icons, one stroke weight, in currentColor.
 const GithubIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
@@ -129,29 +128,38 @@ export default function App() {
               <div className="projects">
                 <h2 id="projects-title" className="label">projects</h2>
                 <ul className="project-bento">
-                  {projects.map((project, index) => (
-                    <li className={`project-tile project-tile--${project.name}`} key={project.name}>
-                      <div className="project-tile-copy">
-                        <div className="project-tile-eyebrow" aria-hidden="true">
-                          <span>0{index + 1} / {index === 0 ? "featured" : "projects"}</span>
-                          <span className="project-tile-mark">✳</span>
-                        </div>
+                  {projects.map((project) => (
+                    <li className={`project-card project-card--${project.name}`} key={project.name}>
+                      <div className="project-card-content">
                         <h3>{project.name}</h3>
                         <p>{project.description}</p>
-                        <div className="project-tile-actions">
-                          <a className="btn btn--dark btn--sm" href={project.repo} target="_blank" rel="noopener noreferrer">
-                            <GithubIcon />
-                            Code
-                          </a>
-                          {project.url && (
-                            <a className="btn btn--fill btn--sm" href={project.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalIcon />
-                              Visit Site
-                            </a>
+                        {PROJECT_TAGS[project.name] && (
+                          <div className="project-tags">
+                            {PROJECT_TAGS[project.name].map((tag) => (
+                              <span key={tag}>{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                        <div className="project-actions">
+                          {project.name === "portfolio" ? (
+                            <span className="project-here">you are here</span>
+                          ) : (
+                            project.url && (
+                              <a className="btn project-open-site" href={project.url} target="_blank" rel="noopener noreferrer">
+                                Open site
+                              </a>
+                            )
                           )}
+                          <a className="btn project-view-code" href={project.repo} target="_blank" rel="noopener noreferrer">
+                            View code
+                          </a>
                         </div>
                       </div>
-                      <ProjectArt name={project.name} />
+                      {project.name === "pixl" && (
+                        <div className="project-preview" aria-label="PIXL preview placeholder">
+                          [pixl screenshot or short GIF]
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
