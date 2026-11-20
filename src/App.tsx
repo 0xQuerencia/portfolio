@@ -2,6 +2,7 @@ import { Ascii } from "ascii.rest/react";
 import * as earthrise from "ascii.rest/pieces/earthrise";
 import { projects } from "./data";
 import Labs from "./Labs";
+import ProjectArt from "./ProjectArt";
 import { useHorizontalScroll } from "./useHorizontalScroll";
 
 const PANEL_COUNT = 5;
@@ -127,27 +128,30 @@ export default function App() {
             <section className="panel" aria-labelledby="projects-title">
               <div className="projects">
                 <h2 id="projects-title" className="label">projects</h2>
-                <ul className="grid">
+                <ul className="project-bento">
                   {projects.map((project, index) => (
-                    <li className="card" key={project.name}>
-                      <div className="card-eyebrow" aria-hidden="true">
-                        <span>0{index + 1} / {index === 0 ? "featured" : "selected"}</span>
-                        <span className="card-spark">✳</span>
-                      </div>
-                      <h3>{project.name}</h3>
-                      <p>{project.description}</p>
-                      <div className="actions">
-                        {project.url && (
-                          <a className="btn btn--fill btn--sm" href={project.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalIcon />
-                            Visit Site
+                    <li className={`project-tile project-tile--${project.name}`} key={project.name}>
+                      <div className="project-tile-copy">
+                        <div className="project-tile-eyebrow" aria-hidden="true">
+                          <span>0{index + 1} / {index === 0 ? "featured" : "projects"}</span>
+                          <span className="project-tile-mark">✳</span>
+                        </div>
+                        <h3>{project.name}</h3>
+                        <p>{project.description}</p>
+                        <div className="project-tile-actions">
+                          <a className="btn btn--dark btn--sm" href={project.repo} target="_blank" rel="noopener noreferrer">
+                            <GithubIcon />
+                            Code
                           </a>
-                        )}
-                        <a className="btn btn--dark btn--sm" href={project.repo} target="_blank" rel="noopener noreferrer">
-                          <GithubIcon />
-                          Code
-                        </a>
+                          {project.url && (
+                            <a className="btn btn--fill btn--sm" href={project.url} target="_blank" rel="noopener noreferrer">
+                              <ExternalIcon />
+                              Visit Site
+                            </a>
+                          )}
+                        </div>
                       </div>
+                      <ProjectArt name={project.name} />
                     </li>
                   ))}
                 </ul>
