@@ -15,6 +15,13 @@ const CONTACT = 4;
 
 const PROMPT_PATHS = ["~", "~/about", "~/projects", "~/labs", "~/contact"] as const;
 
+const PROJECT_SCREENSHOTS: Record<string, string> = {
+  pixie: "Pixie website with a pixel-art night scene and setup page",
+  x: "X website showing the dictation app and desktop interface",
+  ripple: "Ripple website with pixel characters and its what-if tagline",
+};
+
+
 const PROJECT_TAGS: Record<string, readonly string[]> = {
   pixl: ["2D world", "Pixels"],
   aether: ["Hyprland", "Quickshell"],
@@ -153,6 +160,16 @@ export default function App() {
                         </div>
                       </div>
                       {project.name === "pixl" && <PixlPreview />}
+                      {PROJECT_SCREENSHOTS[project.name] && (
+                        <div className={`project-screenshot project-screenshot--${project.name}`}>
+                          <img
+                            src={`/previews/${project.name}.webp`}
+                            alt={PROJECT_SCREENSHOTS[project.name]}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
