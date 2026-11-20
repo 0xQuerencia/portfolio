@@ -254,7 +254,7 @@ html, body {
     "featured middle-left middle-right"
     "wide wide corner";
   gap: 16px;
-  height: clamp(535px, 68vh, 660px);
+  height: clamp(630px, 72vh, 720px);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -266,7 +266,7 @@ html, body {
   min-width: 0;
   min-height: 0;
   flex-direction: column;
-  padding: clamp(16px, 1.6vw, 24px);
+  padding: clamp(14px, 1.2vw, 20px);
   border: 1px solid var(--line);
   border-radius: 0;
   outline: 1px dashed rgba(242, 239, 232, 0.2);
@@ -311,7 +311,7 @@ html, body {
   margin: 0 0 14px;
   max-width: 50ch;
   color: var(--ink-soft);
-  font: 400 clamp(0.82rem, 0.96vw, 0.96rem) / 1.55 var(--mono);
+  font: 400 clamp(0.82rem, 0.96vw, 0.96rem) / 1.5 var(--mono);
   overflow-wrap: anywhere;
 }
 
@@ -345,7 +345,6 @@ html, body {
   padding: 0.56rem 0.82rem;
   border: 1px dashed rgba(242, 239, 232, 0.28);
   border-radius: 0;
-  outline: none;
   background: rgba(9, 10, 17, 0.24);
   color: var(--ink);
   text-decoration: none;
