@@ -142,14 +142,10 @@ export default function App() {
                           </div>
                         )}
                         <div className="project-actions">
-                          {project.name === "portfolio" ? (
-                            <span className="project-here">you are here</span>
-                          ) : (
-                            project.url && (
-                              <a className="btn project-open-site" href={project.url} target="_blank" rel="noopener noreferrer">
-                                Open site
-                              </a>
-                            )
+                          {project.url && (
+                            <a className="btn project-open-site" href={project.url} target="_blank" rel="noopener noreferrer">
+                              Open site
+                            </a>
                           )}
                           <a className="btn project-view-code" href={project.repo} target="_blank" rel="noopener noreferrer">
                             View code
