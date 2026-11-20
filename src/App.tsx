@@ -163,7 +163,7 @@ export default function App() {
                       {PROJECT_SCREENSHOTS[project.name] && (
                         <div className={`project-screenshot project-screenshot--${project.name}`}>
                           <img
-                            src={`/previews/${project.name}.webp`}
+                            src={project.name === "ripple" ? "/previews/ripple-v2.webp" : `/previews/${project.name}.webp`}
                             alt={PROJECT_SCREENSHOTS[project.name]}
                             loading="lazy"
                             decoding="async"
