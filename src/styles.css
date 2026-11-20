@@ -411,8 +411,7 @@ html, body {
       "featured featured"
       "banner banner"
       "middle-left middle-right"
-      "wide wide"
-      ". .";
+      "wide wide";
   }
   .project-card { min-height: 235px; padding: 20px; }
   .project-card--pixl { min-height: 385px; }
@@ -426,8 +425,7 @@ html, body {
       "banner"
       "middle-left"
       "middle-right"
-      "wide"
-      ".";
+      "wide";
   }
   .project-card { min-height: 210px; }
   .project-card--pixl { min-height: 440px; }
