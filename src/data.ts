@@ -10,7 +10,7 @@ export interface Project {
 export const projects: readonly Project[] = [
   {
     name: "pixl",
-    description: "Ship real projects inside a 2D world, earn Pixels, unlock real prizes.",
+    description: "A gamified, pixelated You Ship, We Ship program.",
     url: "https://pixl.hackclub.com",
     repo: "https://github.com/hackclub/pixl",
   },
