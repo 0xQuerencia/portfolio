@@ -198,44 +198,30 @@ export default function Labs() {
             <div className="labs-selected" aria-live="polite">
               <div className="labs-selected-main">
                 <div className="labs-selected-meta">
-                  <span>selected / 0{selectedNumber}</span>
-                  <span>last updated <time dateTime={selected.lastActivity}>{relativeDate(selected.lastActivity)}</time></span>
+                  <span>open folder / 0{selectedNumber}</span>
+                  <span>updated <time dateTime={selected.lastActivity}>{relativeDate(selected.lastActivity)}</time></span>
                 </div>
-
-                <p className="labs-selected-path">~/labs/</p>
+                <p className="labs-selected-path">~/labs/{selected.name}/</p>
                 <h3>{selected.name}</h3>
                 <p className="labs-selected-description">{selected.description || "no description yet."}</p>
 
-                <div className="labs-selected-actions">
-                  <a className="labs-action-primary" href={selected.repoUrl} target="_blank" rel="noopener noreferrer">
-                    view repository <span aria-hidden="true">↗</span>
-                  </a>
-                  {selected.homepage && (
-                    <a className="labs-action-secondary" href={selected.homepage} target="_blank" rel="noopener noreferrer">
-                      visit site <span aria-hidden="true">↗</span>
+                <div className="labs-selected-footer">
+                  <div className="labs-selected-stats" aria-label="Repository details">
+                    <span><strong>language</strong>{selected.language || "not specified"}</span>
+                    <span><strong>activity</strong>{selected.hasPersonalActivity ? "public coding events" : "repository update"}</span>
+                  </div>
+                  <div className="labs-selected-actions">
+                    <a className="labs-action-primary" href={selected.repoUrl} target="_blank" rel="noopener noreferrer">
+                      view code <span aria-hidden="true">↗</span>
                     </a>
-                  )}
+                    {selected.homepage && (
+                      <a className="labs-action-secondary" href={selected.homepage} target="_blank" rel="noopener noreferrer">
+                        open site <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <aside className="labs-repo-details" aria-label="Repository details">
-                <p className="labs-details-heading">/ repo details</p>
-                <dl>
-                  <div>
-                    <dt>language</dt>
-                    <dd>{selected.language || "not specified"}</dd>
-                  </div>
-                  <div>
-                    <dt>last activity</dt>
-                    <dd><time dateTime={selected.lastActivity}>{relativeDate(selected.lastActivity)}</time></dd>
-                  </div>
-                  <div>
-                    <dt>activity signal</dt>
-                    <dd>{selected.hasPersonalActivity ? "public coding events" : "repository update"}</dd>
-                  </div>
-                </dl>
-                <p className="labs-details-note">recent activity is a signal, not a declared work status.</p>
-              </aside>
             </div>
           </>
         )}
