@@ -538,35 +538,11 @@ html, body {
   background-size: 16px 16px;
 }
 
-.labs-coming-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  color: var(--accent);
-  font-size: 0.8rem;
-}
-
-.labs-coming-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--ink-soft);
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.labs-coming-status > span {
-  width: 6px;
-  height: 6px;
-  background: var(--accent);
-}
-
 .labs-coming-folder {
   position: relative;
   width: 98px;
   height: 81px;
-  margin: 34px 0 22px;
+  margin: 12px 0 22px;
 }
 
 .labs-coming-folder-back,
@@ -627,8 +603,6 @@ html, body {
   font: 600 clamp(2.8rem, 5vw, 4rem) / 1 var(--display);
 }
 
-.labs-coming-heading span { color: var(--accent); }
-
 .labs-coming-title {
   margin: 12px 0 10px;
   color: var(--ink);
@@ -666,8 +640,6 @@ html, body {
 
 @media (max-width: 520px) {
   .labs-coming { padding: 28px 24px; }
-  .labs-coming-meta { align-items: flex-start; }
-  .labs-coming-status { font-size: 0.65rem; }
   .labs-coming-folder { margin-top: 30px; }
 }
 
