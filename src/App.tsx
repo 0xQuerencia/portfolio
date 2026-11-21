@@ -23,7 +23,7 @@ const PROJECT_SCREENSHOTS: Record<string, string> = {
 
 
 const PROJECT_TAGS: Record<string, readonly string[]> = {
-  pixl: ["2D world", "Pixels"],
+  pixl: ["YSWS"],
   aether: ["Hyprland", "Quickshell"],
   x: ["Linux", "dictation"],
   pixie: ["Slack", "bot"],
