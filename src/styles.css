@@ -216,7 +216,8 @@ html, body {
 /* About ------------------------------------------------------------------ */
 
 .about {
-  max-width: 640px;
+  width: 100%;
+  max-width: 760px;
   background: rgba(190, 205, 230, 0.07);
   -webkit-backdrop-filter: blur(22px) saturate(160%) brightness(1.15);
   backdrop-filter: blur(22px) saturate(160%) brightness(1.15);
@@ -228,6 +229,95 @@ html, body {
 
 .about p { margin: 0 0 1em; color: var(--ink-soft); }
 .about p:last-child { margin-bottom: 0; }
+
+.about > p:last-of-type { margin-bottom: 0; }
+
+.github-activity {
+  margin-top: clamp(18px, 3vh, 28px);
+  padding-top: 18px;
+  border-top: 1px dashed rgba(242, 239, 232, 0.23);
+}
+
+.github-activity-heading,
+.github-activity-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.github-activity-heading h3 {
+  margin: 0;
+  color: var(--ink);
+  font: 600 1.15rem / 1.2 var(--display);
+}
+
+.github-activity-heading a {
+  color: var(--accent);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.github-activity-heading a:hover { text-decoration: underline; }
+
+.about .github-activity-total,
+.about .github-activity-message {
+  margin: 9px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.79rem;
+  line-height: 1.4;
+}
+
+.github-activity-chart {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 12px;
+}
+
+.github-activity-axis {
+  fill: var(--ink-soft);
+  font: 9px var(--mono);
+}
+
+.github-activity-cell { transition: filter 130ms ease; }
+.github-activity-cell:hover { filter: brightness(1.3); }
+
+.github-activity-footer {
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 0.71rem;
+}
+
+.github-activity-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.github-activity-swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 1px;
+}
+
+@media (max-height: 720px) and (min-width: 900px) {
+  .about { padding: 20px 26px; }
+  .about > p { margin-bottom: 0.7em; line-height: 1.48; }
+  .github-activity { margin-top: 12px; padding-top: 12px; }
+}
+
+@media (max-width: 520px) {
+  .github-activity-heading h3 { font-size: 1.02rem; }
+  .github-activity-heading a { font-size: 0.74rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .github-activity-cell { transition: none; }
+}
 
 .hl { color: var(--ink); font-weight: 500; }
 

@@ -2,6 +2,7 @@ import { Ascii } from "ascii.rest/react";
 import * as earthrise from "ascii.rest/pieces/earthrise";
 import { projects } from "./data";
 import Labs from "./Labs";
+import GitHubHeatmap from "./GitHubHeatmap";
 import PixlPreview from "./PixlPreview";
 import { useHorizontalScroll } from "./useHorizontalScroll";
 
@@ -129,6 +130,7 @@ export default function App() {
                 <p>
                   And I mostly build whatever idea comes up in my mind at 3 am on a random tuesday.
                 </p>
+                <GitHubHeatmap />
               </div>
             </section>
 
