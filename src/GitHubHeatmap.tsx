@@ -170,7 +170,7 @@ export default function GitHubHeatmap() {
             <span>{compact ? "last 26 weeks" : "last 12 months"}</span>
             <div className="github-activity-legend" aria-label="Contribution intensity, from less to more">
               <span>less</span>
-              {COLORS.map((color, index) => (
+              {COLORS.map((color) => (
                 <span key={color} className="github-activity-swatch" style={{ backgroundColor: color }} aria-hidden="true" />
               ))}
               <span>more</span>
