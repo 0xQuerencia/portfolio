@@ -1,4 +1,3 @@
-import { useLayoutEffect, useRef, useState } from "react";
 import { Ascii } from "ascii.rest/react";
 import * as earthrise from "ascii.rest/pieces/earthrise";
 import { projects } from "./data";
@@ -57,37 +56,6 @@ const InstagramIcon = () => (
 
 export default function App() {
   const { outerRef, trackRef, goTo, active } = useHorizontalScroll(PANEL_COUNT);
-  const navLinksRef = useRef<HTMLUListElement>(null);
-  const [navUnderline, setNavUnderline] = useState<{ x: number; y: number; width: number } | null>(null);
-
-  useLayoutEffect(() => {
-    const list = navLinksRef.current;
-    if (!list) return;
-
-    const updateUnderline = () => {
-      const link = list.querySelectorAll<HTMLAnchorElement>("a")[active];
-      if (!link) return;
-      const container = list.getBoundingClientRect();
-      const target = link.getBoundingClientRect();
-      setNavUnderline({
-        x: target.left - container.left,
-        y: target.bottom - container.top - 7,
-        width: target.width,
-      });
-    };
-
-    updateUnderline();
-    const observer = new ResizeObserver(updateUnderline);
-    observer.observe(list);
-    list.querySelectorAll("a").forEach((link) => observer.observe(link));
-    window.addEventListener("resize", updateUnderline);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateUnderline);
-    };
-  }, [active]);
-
   const navLink = (label: string, index: number) => {
     const isActive = index === active;
     return (
@@ -120,21 +88,12 @@ export default function App() {
         <span className="prompt">
           0xque@home:<span className="prompt-path" key={active}>{PROMPT_PATHS[active] ?? "~"}</span>
         </span>
-        <ul className="nav-links" ref={navLinksRef}>
+        <ul className="nav-links">
           {navLink("home", HOME)}
           {navLink("about", ABOUT)}
           {navLink("projects", PROJECTS)}
           {navLink("labs", LABS)}
           {navLink("contact", CONTACT)}
-          <li
-            className="nav-underline"
-            aria-hidden="true"
-            style={navUnderline ? {
-              width: navUnderline.width,
-              transform: `translate3d(${navUnderline.x}px, ${navUnderline.y}px, 0)`,
-              opacity: 1,
-            } : undefined}
-          />
         </ul>
       </nav>
 
