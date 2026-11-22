@@ -181,6 +181,23 @@ html, body {
   color: var(--ink);
 }
 
+.hello-code { font-family: var(--mono); }
+
+.hello-world {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15em;
+  letter-spacing: -0.04em;
+}
+
+.hello .accent {
+  color: var(--accent);
+  font-family: "Pixelify Sans", var(--sans);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
 .accent { color: var(--accent); font-family: var(--sans); }
 
 .tagline {
