@@ -200,7 +200,6 @@ export default function GitHubHeatmap() {
                   onBlur={() => setHovered(null)}
                   onKeyDown={(event) => moveFocus(event, day.date)}
                 >
-                  <title>{day.count + (day.count === 1 ? " contribution" : " contributions") + " on " + formatDay(day.date)}</title>
                 </rect>
               ))}
             </svg>
