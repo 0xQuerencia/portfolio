@@ -102,11 +102,13 @@ export default function App() {
           <div className="h-track" ref={trackRef}>
             <section className="panel hero" aria-label="Home">
               <h1 className="hello">
-                hello, world.
+                <span className="hello-code">hello,</span>{" "}
+                <span className="hello-world">world.</span>
                 <br />
-                i'm <span className="accent">0xque</span>
+                <span className="hello-code">i'm</span>{" "}
+                <span className="accent">0xque</span>
               </h1>
-              <p className="tagline">I'd rather build it than pay for it.</p>
+              <p className="tagline">i'd rather build it than pay for it.</p>
               <div className="btns">
                 <button type="button" className="btn btn--primary" onClick={() => goTo(PROJECTS)}>
                   view projects <span className="btn-arrow" aria-hidden="true">→</span>
