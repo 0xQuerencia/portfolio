@@ -99,9 +99,10 @@ html, body {
 }
 
 .prompt { color: var(--ink); font-family: var(--mono); }
-.prompt-path { color: var(--accent); }
+.prompt-path { color: var(--accent); display: inline-block; }
 
 .nav-links {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -116,29 +117,44 @@ html, body {
   min-height: 44px;
   color: var(--ink-soft);
   text-decoration: none;
+  transition: color 180ms ease;
 }
 
-/* The underline grows from the left when a section becomes active, and shrinks away from the old one. */
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 6px;
-  height: 3px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
-.nav-links a:hover { color: var(--ink); }
-
-.nav-links a:hover::after,
-.nav-links a.active::after { transform: scaleX(1); }
-
+.nav-links a:hover,
 .nav-links a.active { color: var(--ink); }
+
+.nav-underline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  padding: 0;
+  background: var(--accent);
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 150ms ease;
+}
+
+@media (max-width: 899px) {
+  .nav-underline { display: none; }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 220ms ease;
+  }
+
+  .nav-links a.active::after { transform: scaleX(1); }
+}
 
 /* Horizontal track ------------------------------------------------------- */
 
@@ -845,22 +861,17 @@ html, body {
 }
 
 
-/* Small, tactile responses across the portfolio. Keep panels and scroll mechanics untouched. */
-.prompt-path {
-  display: inline-block;
-  transform-origin: left center;
-}
+/* Refined motion: responsive controls, not an animated page. -------------- */
 
 .btn-arrow {
   display: inline-block;
   margin-left: 6px;
-  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn,
 .project-actions .btn,
 .nav-links a,
-.contact-links a,
 .github-activity-heading a,
 .labs-coming-link {
   -webkit-tap-highlight-color: transparent;
@@ -868,174 +879,104 @@ html, body {
 
 .btn,
 .project-actions .btn {
-  transition: background-color 180ms ease, border-color 180ms ease,
-    outline-color 180ms ease, box-shadow 200ms ease,
-    transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: background-color 170ms ease, border-color 170ms ease,
+    transform 170ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 170ms ease;
 }
 
 .btn:active,
-.project-actions .btn:active {
-  transform: translateY(1px) scale(0.985);
-}
-
-.nav-links a {
-  transition: color 180ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.nav-links a::after {
-  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
+.project-actions .btn:active { transform: translateY(1px); }
 
 .project-card {
   transition: border-color 220ms ease, outline-color 220ms ease,
-    box-shadow 260ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow 260ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.project-card h3,
-.project-tags span {
-  transition: color 200ms ease, border-color 200ms ease;
+.project-card h3 {
+  transition: color 200ms ease;
 }
 
 .project-screenshot img,
 .project-preview-media {
-  transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .github-activity-cell {
   transform-box: fill-box;
   transform-origin: center;
-  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 160ms ease;
-}
-
-.github-activity-heading a,
-.labs-coming-link,
-.contact-links a {
-  transition: color 180ms ease, border-color 180ms ease;
-}
-
-.contact-links svg,
-.labs-coming-link span {
-  display: inline-block;
-  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 160ms ease, filter 160ms ease;
 }
 
 .project-card:focus-within {
-  border-color: rgba(79, 156, 255, 0.6);
-  outline-color: rgba(79, 156, 255, 0.4);
+  border-color: rgba(79, 156, 255, 0.52);
+  outline-color: rgba(79, 156, 255, 0.35);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .nav-links a:hover { transform: translateY(-2px); }
-
   .btn:hover,
   .project-actions .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.28);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
   }
 
   .btn:hover .btn-arrow,
   .project-actions .btn:hover .btn-arrow {
-    transform: translate(3px, -1px);
+    transform: translateX(2px);
   }
 
   .project-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(79, 156, 255, 0.52);
-    outline-color: rgba(79, 156, 255, 0.25);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.24);
+    transform: translateY(-2px);
+    border-color: rgba(79, 156, 255, 0.46);
+    outline-color: rgba(79, 156, 255, 0.22);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
 
   .project-card:hover h3 { color: #a3ccff; }
-  .project-card:hover .project-tags span { border-color: rgba(79, 156, 255, 0.65); }
   .project-card:hover .project-screenshot img,
-  .project-card:hover .project-preview-media { transform: scale(1.025); }
+  .project-card:hover .project-preview-media { transform: scale(1.012); }
 
   .github-activity-cell:hover {
-    transform: scale(1.18);
-    filter: brightness(1.28);
+    transform: scale(1.09);
+    filter: brightness(1.18);
   }
-
-  .contact-links a:hover svg { transform: translate(4px, -2px); }
-  .labs-coming-link:hover span { transform: translate(3px, -2px); }
-  .about:hover { outline-color: rgba(79, 156, 255, 0.44); }
 }
 
-.about {
-  transition: outline-color 220ms ease;
-}
-
-@keyframes portfolio-reveal {
-  from { opacity: 0.45; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes portfolio-fade {
-  from { opacity: 0.45; }
+@keyframes nav-path-fade {
+  from { opacity: 0.4; }
   to { opacity: 1; }
 }
 
-@keyframes prompt-in {
-  from { opacity: 0.5; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .prompt-path { animation: prompt-in 220ms ease-out both; }
-
-  .panel--active .hello,
-  .panel--active .about,
-  .panel--active .projects > .label,
-  .panel--active .labs-coming,
-  .panel--active .contact-inner {
-    animation: portfolio-reveal 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  .panel--active .project-card {
-    animation: portfolio-fade 360ms ease-out both;
-  }
-
-  .panel--active .project-card:nth-child(2) { animation-delay: 45ms; }
-  .panel--active .project-card:nth-child(3) { animation-delay: 90ms; }
-  .panel--active .project-card:nth-child(4) { animation-delay: 135ms; }
-  .panel--active .project-card:nth-child(5) { animation-delay: 180ms; }
+  .prompt-path { animation: nav-path-fade 190ms ease-out both; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn,
-  .btn-arrow,
+  .prompt-path { animation: none; }
+
+  .nav-underline,
   .nav-links a,
   .nav-links a::after,
+  .btn,
+  .btn-arrow,
+  .project-actions .btn,
   .project-card,
   .project-card h3,
-  .project-tags span,
   .project-screenshot img,
   .project-preview-media,
-  .github-activity-cell,
-  .contact-links a,
-  .contact-links svg,
-  .labs-coming-link,
-  .labs-coming-link span,
-  .about {
+  .github-activity-cell {
     transition: none;
   }
 
-  .prompt-path { animation: none; }
   .btn:active,
   .project-actions .btn:active { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
-  .nav-links a:hover,
   .btn:hover,
   .project-actions .btn:hover,
+  .btn:hover .btn-arrow,
+  .project-actions .btn:hover .btn-arrow,
   .project-card:hover,
   .project-card:hover .project-screenshot img,
   .project-card:hover .project-preview-media,
-  .github-activity-cell:hover,
-  .contact-links a:hover svg,
-  .labs-coming-link:hover span,
-  .btn:hover .btn-arrow,
-  .project-actions .btn:hover .btn-arrow {
-    transform: none;
-  }
+  .github-activity-cell:hover { transform: none; }
 }
