@@ -157,46 +157,86 @@ export default function GitHubHeatmap() {
       )}
       {chart && data && (
         <>
-          <svg
-            className="github-activity-chart"
-            viewBox={"0 0 " + chart.width + " " + chart.height}
-            role="img"
-            aria-label={"GitHub contribution heatmap for the last " + (compact ? "26 weeks" : "12 months")}
-          >
-            <title>GitHub contributions for 0xQuerencia</title>
-            {chart.months.map((month, index) => (
-              <text key={index} x={month.x} y={12} className="github-activity-axis">
-                {month.label}
-              </text>
-            ))}
-            {([["Mon", 1], ["Wed", 3], ["Fri", 5]] as const).map(([label, row]) => (
-              <text key={label} x={0} y={TOP + row * STEP + 8} className="github-activity-axis">
-                {label}
-              </text>
-            ))}
-            {chart.cells.map((day) => (
-              <rect
-                key={day.date}
-                x={LEFT + day.week * STEP}
-                y={TOP + day.weekday * STEP}
-                width={CELL}
-                height={CELL}
-                rx={1.5}
-                fill={COLORS[day.level]}
-                className="github-activity-cell"
+          <div className="github-activity-visual">
+            <svg
+              className="github-activity-chart"
+              viewBox={"0 0 " + chart.width + " " + chart.height}
+              role="group"
+              aria-label={"GitHub contributions over the last " + (compact ? "26 weeks" : "12 months") + ". Use arrow keys to explore days."}
+            >
+              <title>GitHub contributions for 0xQuerencia</title>
+              {chart.months.map((month, index) => (
+                <text key={index} x={month.x} y={12} className="github-activity-axis">
+                  {month.label}
+                </text>
+              ))}
+              {([["Mon", 1], ["Wed", 3], ["Fri", 5]] as const).map(([label, row]) => (
+                <text key={label} x={0} y={TOP + row * STEP + 8} className="github-activity-axis">
+                  {label}
+                </text>
+              ))}
+              {chart.cells.map((day) => (
+                <rect
+                  key={day.date}
+                  data-contribution-date={day.date}
+                  x={LEFT + day.week * STEP}
+                  y={TOP + day.weekday * STEP}
+                  width={CELL}
+                  height={CELL}
+                  rx={2}
+                  fill={COLORS[day.level]}
+                  opacity={filteredLevel === null || day.level === filteredLevel ? 1 : 0.22}
+                  className={hovered?.date === day.date ? "github-activity-cell is-hovered" : "github-activity-cell"}
+                  style={{ animationDelay: Math.min(day.week * 10, 530) + "ms" }}
+                  tabIndex={day.date === focusedDate ? 0 : -1}
+                  role="img"
+                  aria-label={day.count + (day.count === 1 ? " contribution" : " contributions") + " on " + formatDay(day.date)}
+                  onMouseEnter={() => setHovered(day)}
+                  onMouseLeave={() => setHovered(null)}
+                  onFocus={() => {
+                    setHovered(day);
+                    setFocusDate(day.date);
+                  }}
+                  onBlur={() => setHovered(null)}
+                  onKeyDown={(event) => moveFocus(event, day.date)}
+                >
+                  <title>{day.count + (day.count === 1 ? " contribution" : " contributions") + " on " + formatDay(day.date)}</title>
+                </rect>
+              ))}
+            </svg>
+            {hovered && (
+              <div
+                className="github-activity-tooltip"
+                role="status"
+                style={{
+                  left: Math.max(30, Math.min(70, ((LEFT + hovered.week * STEP + CELL / 2) / chart.width) * 100)) + "%",
+                  top: ((TOP + hovered.weekday * STEP) / chart.height) * 100 + "%",
+                }}
               >
-                <title>
-                  {day.count + (day.count === 1 ? " contribution" : " contributions") + " on " + formatDay(day.date)}
-                </title>
-              </rect>
-            ))}
-          </svg>
+                <strong>{hovered.count} {hovered.count === 1 ? "contribution" : "contributions"}</strong>
+                <span>{formatDay(hovered.date)}</span>
+              </div>
+            )}
+          </div>
           <div className="github-activity-footer">
             <span>{compact ? "last 26 weeks" : "last 12 months"}</span>
-            <div className="github-activity-legend" aria-label="Contribution intensity, from less to more">
+            <div className="github-activity-legend" aria-label="Filter activity by intensity">
               <span>less</span>
-              {COLORS.map((color) => (
-                <span key={color} className="github-activity-swatch" style={{ backgroundColor: color }} aria-hidden="true" />
+              {COLORS.map((color, level) => (
+                <button
+                  type="button"
+                  key={color}
+                  aria-label={level === 0 ? "Show days without contributions" : "Show contribution level " + level}
+                  aria-pressed={selectedLevel === level}
+                  title={level === 0 ? "No contributions" : "Level " + level + " activity"}
+                  className={selectedLevel === level ? "github-activity-swatch is-selected" : "github-activity-swatch"}
+                  style={{ backgroundColor: color }}
+                  onMouseEnter={() => setHighlightLevel(level)}
+                  onMouseLeave={() => setHighlightLevel(null)}
+                  onFocus={() => setHighlightLevel(level)}
+                  onBlur={() => setHighlightLevel(null)}
+                  onClick={() => setSelectedLevel(selectedLevel === level ? null : level)}
+                />
               ))}
               <span>more</span>
             </div>
