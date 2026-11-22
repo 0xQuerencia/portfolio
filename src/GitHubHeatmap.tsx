@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useEffect, useState } from "react";
+import { type FocusEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 
 const GITHUB_USER = "0xQuerencia";
 const API_URL = "https://github-contributions-api.jogruber.de/v4/" + GITHUB_USER + "?y=last";
@@ -86,10 +86,11 @@ export default function GitHubHeatmap() {
   const [data, setData] = useState<ContributionData | null>(null);
   const [error, setError] = useState(false);
   const [compact, setCompact] = useState(false);
-  const [hovered, setHovered] = useState<(Contribution & { week: number; weekday: number }) | null>(null);
-  const [focusDate, setFocusDate] = useState<string | null>(null);
-  const [highlightLevel, setHighlightLevel] = useState<number | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipCountRef = useRef<HTMLElement>(null);
+  const tooltipDateRef = useRef<HTMLSpanElement>(null);
+  const focusDateRef = useRef<string | null>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 620px)");
@@ -115,11 +116,35 @@ export default function GitHubHeatmap() {
     return () => controller.abort();
   }, []);
 
-  const chart = data ? calendarLayout(data.days, compact ? 26 : 53) : null;
-  const filteredLevel = highlightLevel ?? selectedLevel;
-  const focusedDate = focusDate && chart?.cells.some((day) => day.date === focusDate)
-    ? focusDate
-    : chart?.cells[chart.cells.length - 1]?.date;
+  const chart = useMemo(
+    () => data ? calendarLayout(data.days, compact ? 26 : 53) : null,
+    [data, compact],
+  );
+  const defaultFocusDate = chart?.cells[chart.cells.length - 1]?.date;
+
+  // Only the tooltip's DOM changes on hover; React doesn't redraw ~365 cells.
+  const showTooltip = (day: Contribution & { week: number; weekday: number }) => {
+    const tooltip = tooltipRef.current;
+    if (!tooltip || !chart || !tooltipCountRef.current || !tooltipDateRef.current) return;
+    tooltipCountRef.current.textContent =
+      day.count + (day.count === 1 ? " contribution" : " contributions");
+    tooltipDateRef.current.textContent = formatDay(day.date);
+    tooltip.style.setProperty("--tooltip-x", ((LEFT + day.week * STEP + CELL / 2) / chart.width * 100) + "%");
+    tooltip.style.setProperty("--tooltip-y", ((TOP + day.weekday * STEP) / chart.height * 100) + "%");
+    tooltip.hidden = false;
+  };
+
+  const hideTooltip = () => {
+    if (tooltipRef.current) tooltipRef.current.hidden = true;
+  };
+
+  const focusCell = (event: FocusEvent<SVGRectElement>, day: Contribution & { week: number; weekday: number }) => {
+    const cell = event.currentTarget;
+    cell.ownerSVGElement?.querySelector('[tabindex="0"]')?.setAttribute("tabindex", "-1");
+    cell.setAttribute("tabindex", "0");
+    focusDateRef.current = day.date;
+    showTooltip(day);
+  };
 
   const moveFocus = (event: KeyboardEvent<SVGRectElement>, date: string) => {
     if (!chart) return;
@@ -163,6 +188,7 @@ export default function GitHubHeatmap() {
               viewBox={"0 0 " + chart.width + " " + chart.height}
               role="group"
               aria-label={"GitHub contributions over the last " + (compact ? "26 weeks" : "12 months") + ". Use arrow keys to explore days."}
+              onMouseLeave={hideTooltip}
             >
               <title>GitHub contributions for 0xQuerencia</title>
               {chart.months.map((month, index) => (
@@ -185,37 +211,22 @@ export default function GitHubHeatmap() {
                   height={CELL}
                   rx={2}
                   fill={COLORS[day.level]}
-                  opacity={filteredLevel === null || day.level === filteredLevel ? 1 : 0.22}
-                  className={hovered?.date === day.date ? "github-activity-cell is-hovered" : "github-activity-cell"}
-                  style={{ animationDelay: Math.min(day.week * 10, 530) + "ms" }}
-                  tabIndex={day.date === focusedDate ? 0 : -1}
+                  opacity={selectedLevel === null || day.level === selectedLevel ? 1 : 0.22}
+                  className="github-activity-cell"
+                  tabIndex={day.date === (focusDateRef.current ?? defaultFocusDate) ? 0 : -1}
                   role="img"
                   aria-label={day.count + (day.count === 1 ? " contribution" : " contributions") + " on " + formatDay(day.date)}
-                  onMouseEnter={() => setHovered(day)}
-                  onMouseLeave={() => setHovered(null)}
-                  onFocus={() => {
-                    setHovered(day);
-                    setFocusDate(day.date);
-                  }}
-                  onBlur={() => setHovered(null)}
+                  onMouseEnter={() => showTooltip(day)}
+                  onFocus={(event) => focusCell(event, day)}
+                  onBlur={hideTooltip}
                   onKeyDown={(event) => moveFocus(event, day.date)}
-                >
-                </rect>
+                />
               ))}
             </svg>
-            {hovered && (
-              <div
-                className="github-activity-tooltip"
-                role="status"
-                style={{
-                  left: Math.max(30, Math.min(70, ((LEFT + hovered.week * STEP + CELL / 2) / chart.width) * 100)) + "%",
-                  top: ((TOP + hovered.weekday * STEP) / chart.height) * 100 + "%",
-                }}
-              >
-                <strong>{hovered.count} {hovered.count === 1 ? "contribution" : "contributions"}</strong>
-                <span>{formatDay(hovered.date)}</span>
-              </div>
-            )}
+            <div ref={tooltipRef} className="github-activity-tooltip" role="tooltip" hidden>
+              <strong ref={tooltipCountRef} />
+              <span ref={tooltipDateRef} />
+            </div>
           </div>
           <div className="github-activity-footer">
             <span>{compact ? "last 26 weeks" : "last 12 months"}</span>
@@ -230,10 +241,6 @@ export default function GitHubHeatmap() {
                   title={level === 0 ? "No contributions" : "Level " + level + " activity"}
                   className={selectedLevel === level ? "github-activity-swatch is-selected" : "github-activity-swatch"}
                   style={{ backgroundColor: color }}
-                  onMouseEnter={() => setHighlightLevel(level)}
-                  onMouseLeave={() => setHighlightLevel(null)}
-                  onFocus={() => setHighlightLevel(level)}
-                  onBlur={() => setHighlightLevel(null)}
                   onClick={() => setSelectedLevel(selectedLevel === level ? null : level)}
                 />
               ))}
