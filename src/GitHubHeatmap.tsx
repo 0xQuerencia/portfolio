@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type KeyboardEvent, useEffect, useState } from "react";
 
 const GITHUB_USER = "0xQuerencia";
 const API_URL = "https://github-contributions-api.jogruber.de/v4/" + GITHUB_USER + "?y=last";
@@ -86,6 +86,10 @@ export default function GitHubHeatmap() {
   const [data, setData] = useState<ContributionData | null>(null);
   const [error, setError] = useState(false);
   const [compact, setCompact] = useState(false);
+  const [hovered, setHovered] = useState<(Contribution & { week: number; weekday: number }) | null>(null);
+  const [focusDate, setFocusDate] = useState<string | null>(null);
+  const [highlightLevel, setHighlightLevel] = useState<number | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 620px)");
@@ -112,6 +116,27 @@ export default function GitHubHeatmap() {
   }, []);
 
   const chart = data ? calendarLayout(data.days, compact ? 26 : 53) : null;
+  const filteredLevel = highlightLevel ?? selectedLevel;
+  const focusedDate = focusDate && chart?.cells.some((day) => day.date === focusDate)
+    ? focusDate
+    : chart?.cells[chart.cells.length - 1]?.date;
+
+  const moveFocus = (event: KeyboardEvent<SVGRectElement>, date: string) => {
+    if (!chart) return;
+    const offsets: Record<string, number> = {
+      ArrowUp: -1, ArrowDown: 1, ArrowLeft: -7, ArrowRight: 7,
+    };
+    const offset = offsets[event.key];
+    if (offset === undefined) return;
+    event.preventDefault();
+    const current = chart.cells.findIndex((day) => day.date === date);
+    const next = chart.cells[Math.max(0, Math.min(chart.cells.length - 1, current + offset))];
+    if (next) {
+      event.currentTarget.ownerSVGElement
+        ?.querySelector<SVGRectElement>('[data-contribution-date="' + next.date + '"]')
+        ?.focus();
+    }
+  };
 
   return (
     <section className="github-activity" aria-labelledby="github-activity-title">
