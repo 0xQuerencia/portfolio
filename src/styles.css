@@ -844,3 +844,182 @@ html, body {
   .foot { padding-top: 32px; }
 }
 
+
+/* Small, tactile responses across the portfolio. Keep panels and scroll mechanics untouched. */
+.prompt-path {
+  display: inline-block;
+  transform-origin: left center;
+}
+
+.btn-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn,
+.project-actions .btn,
+.nav-links a,
+.contact-links a,
+.github-activity-heading a,
+.labs-coming-link {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn,
+.project-actions .btn {
+  transition: background-color 180ms ease, border-color 180ms ease,
+    outline-color 180ms ease, box-shadow 200ms ease,
+    transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn:active,
+.project-actions .btn:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.nav-links a {
+  transition: color 180ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav-links a::after {
+  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.project-card {
+  transition: border-color 220ms ease, outline-color 220ms ease,
+    box-shadow 260ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.project-card h3,
+.project-tags span {
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.project-screenshot img,
+.project-preview-media {
+  transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.github-activity-cell {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 160ms ease;
+}
+
+.github-activity-heading a,
+.labs-coming-link,
+.contact-links a {
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.contact-links svg,
+.labs-coming-link span {
+  display: inline-block;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.project-card:focus-within {
+  border-color: rgba(79, 156, 255, 0.6);
+  outline-color: rgba(79, 156, 255, 0.4);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-links a:hover { transform: translateY(-2px); }
+
+  .btn:hover,
+  .project-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.28);
+  }
+
+  .btn:hover .btn-arrow,
+  .project-actions .btn:hover .btn-arrow {
+    transform: translate(3px, -1px);
+  }
+
+  .project-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(79, 156, 255, 0.52);
+    outline-color: rgba(79, 156, 255, 0.25);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.24);
+  }
+
+  .project-card:hover h3 { color: #a3ccff; }
+  .project-card:hover .project-tags span { border-color: rgba(79, 156, 255, 0.65); }
+  .project-card:hover .project-screenshot img,
+  .project-card:hover .project-preview-media { transform: scale(1.025); }
+
+  .github-activity-cell:hover {
+    transform: scale(1.18);
+    filter: brightness(1.28);
+  }
+
+  .contact-links a:hover svg { transform: translate(4px, -2px); }
+  .labs-coming-link:hover span { transform: translate(3px, -2px); }
+  .about:hover { outline-color: rgba(79, 156, 255, 0.44); }
+}
+
+.about {
+  transition: outline-color 220ms ease;
+}
+
+@keyframes portfolio-reveal {
+  from { opacity: 0.45; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes portfolio-fade {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
+
+@keyframes prompt-in {
+  from { opacity: 0.5; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .prompt-path { animation: prompt-in 220ms ease-out both; }
+
+  .panel--active .hello,
+  .panel--active .about,
+  .panel--active .projects > .label,
+  .panel--active .labs-coming,
+  .panel--active .contact-inner {
+    animation: portfolio-reveal 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .panel--active .project-card {
+    animation: portfolio-fade 360ms ease-out both;
+  }
+
+  .panel--active .project-card:nth-child(2) { animation-delay: 45ms; }
+  .panel--active .project-card:nth-child(3) { animation-delay: 90ms; }
+  .panel--active .project-card:nth-child(4) { animation-delay: 135ms; }
+  .panel--active .project-card:nth-child(5) { animation-delay: 180ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn-arrow,
+  .nav-links a,
+  .nav-links a::after,
+  .project-card,
+  .project-card h3,
+  .project-tags span,
+  .project-screenshot img,
+  .project-preview-media,
+  .github-activity-cell,
+  .contact-links a,
+  .contact-links svg,
+  .labs-coming-link,
+  .labs-coming-link span,
+  .about {
+    transition: none;
+  }
+
+  .prompt-path { animation: none; }
+  .btn:active,
+  .project-actions .btn:active { transform: none; }
+}
