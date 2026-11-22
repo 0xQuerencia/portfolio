@@ -102,11 +102,9 @@ export default function App() {
           <div className="h-track" ref={trackRef}>
             <section className="panel hero" aria-label="Home">
               <h1 className="hello">
-                <span className="hello-code">hello,</span>{" "}
-                <span className="hello-world">world.</span>
+                hello, world.
                 <br />
-                <span className="hello-code">i'm</span>{" "}
-                <span className="accent">0xque</span>
+                i'm <span className="accent">0xque</span>
               </h1>
               <p className="tagline">i'd rather build it than pay for it.</p>
               <div className="btns">
