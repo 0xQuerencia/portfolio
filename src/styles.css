@@ -1023,3 +1023,19 @@ html, body {
   .btn:active,
   .project-actions .btn:active { transform: none; }
 }
+
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  .nav-links a:hover,
+  .btn:hover,
+  .project-actions .btn:hover,
+  .project-card:hover,
+  .project-card:hover .project-screenshot img,
+  .project-card:hover .project-preview-media,
+  .github-activity-cell:hover,
+  .contact-links a:hover svg,
+  .labs-coming-link:hover span,
+  .btn:hover .btn-arrow,
+  .project-actions .btn:hover .btn-arrow {
+    transform: none;
+  }
+}
