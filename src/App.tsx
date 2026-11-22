@@ -87,7 +87,7 @@ export default function App() {
 
       <nav className="nav" aria-label="Main">
         <span className="prompt">
-          0xque@home:<span className="prompt-path">{PROMPT_PATHS[active] ?? "~"}</span>
+          0xque@home:<span className="prompt-path" key={active}>{PROMPT_PATHS[active] ?? "~"}</span>
         </span>
         <ul className="nav-links">
           {navLink("home", HOME)}
@@ -101,7 +101,7 @@ export default function App() {
       <div className="h-outer" ref={outerRef}>
         <div className="h-sticky">
           <div className="h-track" ref={trackRef}>
-            <section className="panel hero" aria-label="Home">
+            <section className={active === HOME ? "panel hero panel--active" : "panel hero"} aria-label="Home">
               <h1 className="hello">
                 hello, world.
                 <br />
@@ -110,7 +110,7 @@ export default function App() {
               <p className="tagline">I'd rather build it than pay for it.</p>
               <div className="btns">
                 <button type="button" className="btn btn--primary" onClick={() => goTo(PROJECTS)}>
-                  view projects
+                  view projects <span className="btn-arrow" aria-hidden="true">→</span>
                 </button>
                 <button type="button" className="btn" onClick={() => goTo(ABOUT)}>
                   about me
@@ -118,7 +118,7 @@ export default function App() {
               </div>
             </section>
 
-            <section className="panel" aria-labelledby="about-title">
+            <section className={active === ABOUT ? "panel panel--active" : "panel"} aria-labelledby="about-title">
               <div className="about">
                 <h2 id="about-title" className="label">about me</h2>
                 <p>
@@ -134,7 +134,7 @@ export default function App() {
               </div>
             </section>
 
-            <section className="panel" aria-labelledby="projects-title">
+            <section className={active === PROJECTS ? "panel panel--active" : "panel"} aria-labelledby="projects-title">
               <div className="projects">
                 <h2 id="projects-title" className="label">projects</h2>
                 <ul className="project-bento">
@@ -153,11 +153,11 @@ export default function App() {
                         <div className="project-actions">
                           {project.url && (
                             <a className="btn project-open-site" href={project.url} target="_blank" rel="noopener noreferrer">
-                              Open site
+                              Open site <span className="btn-arrow" aria-hidden="true">↗</span>
                             </a>
                           )}
                           <a className="btn project-view-code" href={project.repo} target="_blank" rel="noopener noreferrer">
-                            View code
+                            View code <span className="btn-arrow" aria-hidden="true">↗</span>
                           </a>
                         </div>
                       </div>
@@ -178,11 +178,11 @@ export default function App() {
               </div>
             </section>
 
-            <section className="panel panel--labs" id="labs" aria-labelledby="labs-title">
+            <section className={active === LABS ? "panel panel--labs panel--active" : "panel panel--labs"} id="labs" aria-labelledby="labs-title">
               <Labs />
             </section>
 
-            <section className="panel contact" id="contact" aria-labelledby="contact-title">
+            <section className={active === CONTACT ? "panel contact panel--active" : "panel contact"} id="contact" aria-labelledby="contact-title">
               <div className="contact-inner">
                 <h2 id="contact-title" className="contact-title">contact</h2>
                 <ul className="contact-links">
