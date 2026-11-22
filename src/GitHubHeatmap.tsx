@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type FocusEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 
 const GITHUB_USER = "0xQuerencia";
 const API_URL = "https://github-contributions-api.jogruber.de/v4/" + GITHUB_USER + "?y=last";
@@ -138,7 +138,7 @@ export default function GitHubHeatmap() {
     if (tooltipRef.current) tooltipRef.current.hidden = true;
   };
 
-  const focusCell = (event: React.FocusEvent<SVGRectElement>, day: Contribution & { week: number; weekday: number }) => {
+  const focusCell = (event: FocusEvent<SVGRectElement>, day: Contribution & { week: number; weekday: number }) => {
     const cell = event.currentTarget;
     cell.ownerSVGElement?.querySelector('[tabindex="0"]')?.setAttribute("tabindex", "-1");
     cell.setAttribute("tabindex", "0");
