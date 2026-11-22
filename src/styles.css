@@ -881,12 +881,6 @@ html, body {
   transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.github-activity-cell {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform 160ms ease, filter 160ms ease;
-}
-
 .project-card:focus-within {
   border-color: rgba(79, 156, 255, 0.52);
   outline-color: rgba(79, 156, 255, 0.35);
@@ -915,10 +909,6 @@ html, body {
   .project-card:hover .project-screenshot img,
   .project-card:hover .project-preview-media { transform: scale(1.012); }
 
-  .github-activity-cell:hover {
-    transform: scale(1.09);
-    filter: brightness(1.18);
-  }
 }
 
 @keyframes nav-path-fade {
