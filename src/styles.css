@@ -974,3 +974,102 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   .nav-links a:hover { transform: none; }
 }
+
+
+/* GitHub activity: compact, Bklit-style interactive treatment. */
+.github-activity-visual {
+  position: relative;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.github-activity-visual .github-activity-chart { margin-top: 0; }
+
+.github-activity-cell {
+  cursor: crosshair;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 170ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 180ms ease;
+}
+
+.github-activity-cell.is-hovered {
+  filter: brightness(1.2);
+  transform: scale(1.1);
+}
+
+.github-activity-tooltip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 160px;
+  padding: 9px 12px;
+  border: 1px solid rgba(79, 156, 255, 0.45);
+  border-radius: 3px;
+  background: #101923;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.33);
+  color: var(--ink);
+  font-size: 0.73rem;
+  line-height: 1.4;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(-50%, -112%);
+}
+
+.github-activity-tooltip strong { font-weight: 600; }
+.github-activity-tooltip span { color: var(--ink-soft); }
+
+.github-activity-legend { gap: 5px; }
+
+.github-activity-swatch {
+  appearance: none;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 1px solid rgba(242, 239, 232, 0.14);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.github-activity-swatch.is-selected {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px rgba(79, 156, 255, 0.35);
+}
+
+.github-activity-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .github-activity-swatch:hover {
+    transform: translateY(-2px);
+    border-color: rgba(242, 239, 232, 0.7);
+  }
+}
+
+@keyframes github-activity-cell-in {
+  from { opacity: 0; transform: translateY(3px) scale(0.88); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .github-activity-cell {
+    animation: github-activity-cell-in 260ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .github-activity-tooltip {
+    animation: nav-path-fade 120ms ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .github-activity-cell,
+  .github-activity-swatch { transition: none; animation: none; }
+  .github-activity-tooltip { animation: none; }
+  .github-activity-cell.is-hovered,
+  .github-activity-swatch:hover { transform: none; }
+}
