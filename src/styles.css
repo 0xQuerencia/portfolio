@@ -99,10 +99,9 @@ html, body {
 }
 
 .prompt { color: var(--ink); font-family: var(--mono); }
-.prompt-path { color: var(--accent); display: inline-block; }
+.prompt-path { color: var(--accent); }
 
 .nav-links {
-  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -117,44 +116,29 @@ html, body {
   min-height: 44px;
   color: var(--ink-soft);
   text-decoration: none;
-  transition: color 180ms ease;
 }
 
-.nav-links a:hover,
-.nav-links a.active { color: var(--ink); }
-
-.nav-underline {
+/* The underline grows from the left when a section becomes active, and shrinks away from the old one. */
+.nav-links a::after {
+  content: "";
   position: absolute;
-  top: 0;
   left: 0;
-  height: 2px;
-  padding: 0;
+  right: 0;
+  bottom: 6px;
+  height: 3px;
   background: var(--accent);
-  pointer-events: none;
-  opacity: 0;
-  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    width 340ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 150ms ease;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (max-width: 899px) {
-  .nav-underline { display: none; }
 
-  .nav-links a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 6px;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 220ms ease;
-  }
+.nav-links a:hover { color: var(--ink); }
 
-  .nav-links a.active::after { transform: scaleX(1); }
-}
+.nav-links a:hover::after,
+.nav-links a.active::after { transform: scaleX(1); }
+
+.nav-links a.active { color: var(--ink); }
 
 /* Horizontal track ------------------------------------------------------- */
 
@@ -952,7 +936,6 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   .prompt-path { animation: none; }
 
-  .nav-underline,
   .nav-links a,
   .nav-links a::after,
   .btn,
@@ -979,4 +962,15 @@ html, body {
   .project-card:hover .project-screenshot img,
   .project-card:hover .project-preview-media,
   .github-activity-cell:hover { transform: none; }
+}
+
+/* Restore the original per-link underline behavior without the sliding marker. */
+.nav-links a {
+  transition: color 180ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-links a:hover { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-links a:hover { transform: none; }
 }
