@@ -198,7 +198,7 @@ export default function App() {
                     </a>
                   </li>
                   <li>
-                    <a href="https://instagram.com/querencia.wiz" target="_blank" rel="noopener noreferrer">
+                    <a href="https://instagram.com/0xque" target="_blank" rel="noopener noreferrer">
                       <InstagramIcon />
                       instagram
                     </a>
