@@ -65,13 +65,22 @@ const chapters = [
     id: "intro",
     label: "Intro",
     content: <>
-      <div className="intro-copy">
-        <p className="identity">0xque</p>
-        <h1 id="title-intro">hey, i’m ricky.</h1>
-        <p className="intro-line">i build things i wish existed.</p>
-        <p className="motto">I'd rather build it than pay for it.</p>
+      <div className="intro-frame">
+        <div className="intro-composition">
+          <h1 id="title-intro">
+            <span>Ricky Parmar is a</span>{" "}
+            <span>developer from India</span>{" "}
+            <span>making Linux tools</span>{" "}
+            <span>and low-poly games.</span>
+          </h1>
+          <img className="readme-print" src="/readme-print.svg" width="390" height="260" alt="" />
+        </div>
+        <div className="intro-links links">
+          <a href="https://github.com/0xQuerencia">GitHub</a>
+          <a href="#contact">Contact</a>
+          <a className="intro-next" href="#pixie">Pixie <span aria-hidden="true">→</span></a>
+        </div>
       </div>
-      <img className="readme-sky" src="/readme-sky.svg" width="157" height="145" alt="" />
     </>,
   },
   {

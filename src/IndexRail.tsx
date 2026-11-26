@@ -1,65 +1,79 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 type Chapter = { id: string; label: string; content: ReactNode };
+type Scrub = { pointerId: number; originX: number; started: boolean };
+
+function stopsFor(track: HTMLDivElement) {
+  const limit = track.scrollWidth - track.clientWidth;
+  return Array.from(track.children, panel => Math.min((panel as HTMLElement).offsetLeft, limit));
+}
+
+function rulerPosition(stops: number[], left: number) {
+  for (let index = 1; index < stops.length; index++) {
+    if (left <= stops[index]) {
+      return index - 1 + Math.max(0, (left - stops[index - 1]) / Math.max(1, stops[index] - stops[index - 1]));
+    }
+  }
+  return Math.max(0, stops.length - 1);
+}
 
 export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   const rail = useRef<HTMLDivElement>(null);
   const ruler = useRef<HTMLElement>(null);
-  const scrub = useRef<{ pointerId: number; originX: number; started: boolean } | null>(null);
+  const scrub = useRef<Scrub | null>(null);
   const suppressClick = useRef(false);
-  const announcementTimer = useRef<number>(undefined);
   const [active, setActive] = useState(0);
-  const [announcement, setAnnouncement] = useState("");
 
-  useEffect(() => () => window.clearTimeout(announcementTimer.current), []);
+  function trackPosition() {
+    const track = rail.current;
+    if (!track) return;
+    const position = rulerPosition(stopsFor(track), track.scrollLeft);
+    ruler.current?.style.setProperty("--position", String(position));
+    setActive(Math.round(position));
+  }
 
   useEffect(() => {
+    const track = rail.current;
+    if (!track) return;
     function followHash() {
       const hash = window.location.hash.slice(1);
       const aliases: Record<string, string> = { work: "pixie", about: "contact", top: "intro" };
       const index = chapters.findIndex(({ id }) => id === (aliases[hash] ?? hash));
-      const panel = rail.current?.children[index] as HTMLElement | undefined;
-      if (panel) rail.current?.scrollTo({ left: panel.offsetLeft, behavior: "instant" });
+      if (index >= 0 && track) track.scrollLeft = stopsFor(track)[index];
+      else if (!hash && track) track.scrollLeft = 0;
+      trackPosition();
     }
 
     followHash();
+    const observer = new ResizeObserver(trackPosition);
+    observer.observe(track);
     window.addEventListener("hashchange", followHash);
-    return () => window.removeEventListener("hashchange", followHash);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("hashchange", followHash);
+    };
   }, [chapters]);
 
   function goTo(index: number) {
-    const panel = rail.current?.children[index] as HTMLElement | undefined;
-    if (!panel) return;
+    const track = rail.current;
+    if (!track || !chapters[index]) return;
     const hash = "#" + chapters[index].id;
     if (window.location.hash !== hash) window.history.pushState(null, "", hash);
-    rail.current?.scrollTo({ left: panel.offsetLeft });
-    setAnnouncement(chapters[index].label);
-  }
-
-  function trackPosition() {
-    const track = rail.current;
-    const stride = (track?.children[1] as HTMLElement | undefined)?.offsetLeft;
-    if (!track || !stride) return;
-    const position = Math.min(chapters.length - 1, Math.max(0, track.scrollLeft / stride));
-    ruler.current?.style.setProperty("--position", String(position));
-    const nearest = Math.round(position);
-    setActive(nearest);
-    window.clearTimeout(announcementTimer.current);
-    announcementTimer.current = window.setTimeout(() => setAnnouncement(chapters[nearest].label), 180);
+    track.scrollLeft = stopsFor(track)[index];
+    trackPosition();
   }
 
   function beginScrub(event: PointerEvent<HTMLElement>) {
+    if (!event.isPrimary || event.button !== 0) return;
     suppressClick.current = false;
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
     scrub.current = { pointerId: event.pointerId, originX: event.clientX, started: false };
   }
 
   function moveScrub(event: PointerEvent<HTMLElement>) {
     const gesture = scrub.current;
     const track = rail.current;
-    const stride = (track?.children[1] as HTMLElement | undefined)?.offsetLeft;
-    if (!gesture || gesture.pointerId !== event.pointerId || !track || !stride) return;
-    if (!(event.buttons & 1)) {
+    if (!gesture || gesture.pointerId !== event.pointerId || !track) return;
+    if (event.pointerType === "mouse" && !(event.buttons & 1)) {
       endScrub(event);
       return;
     }
@@ -68,23 +82,18 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       gesture.started = true;
       suppressClick.current = true;
       event.currentTarget.setPointerCapture(event.pointerId);
-      track.dataset.scrubbing = "true";
     }
     const bounds = event.currentTarget.getBoundingClientRect();
-    const position = ((event.clientX - bounds.left) / bounds.width) * chapters.length - 0.5;
-    track.scrollLeft = Math.max(0, Math.min(chapters.length - 1, position)) * stride;
+    const stops = stopsFor(track);
+    const position = Math.max(0, Math.min(stops.length - 1, ((event.clientX - bounds.left) / bounds.width) * stops.length - 0.5));
+    const lower = Math.floor(position);
+    const upper = Math.min(stops.length - 1, lower + 1);
+    track.scrollLeft = stops[lower] + (stops[upper] - stops[lower]) * (position - lower);
+    trackPosition();
   }
 
   function endScrub(event: PointerEvent<HTMLElement>) {
-    const gesture = scrub.current;
-    if (!gesture || gesture.pointerId !== event.pointerId) return;
-    scrub.current = null;
-    const track = rail.current;
-    const stride = (track?.children[1] as HTMLElement | undefined)?.offsetLeft;
-    if (!gesture.started || !track || !stride) return;
-    const nearest = Math.min(chapters.length - 1, Math.max(0, Math.round(track.scrollLeft / stride)));
-    delete track.dataset.scrubbing;
-    goTo(nearest);
+    if (scrub.current?.pointerId === event.pointerId) scrub.current = null;
   }
 
   function navigate(event: KeyboardEvent, index: number, moveFocus: boolean) {
@@ -98,7 +107,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     if (typeof next !== "number") return;
     event.preventDefault();
     goTo(next);
-    if (moveFocus) ruler.current?.querySelectorAll("a")[next]?.focus();
+    if (moveFocus) ruler.current?.querySelectorAll("a")[next]?.focus({ preventScroll: true });
   }
 
   return (
@@ -125,9 +134,21 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
           </a>
         ))}
       </nav>
-      <p className="sr-only" role="status">{announcement}</p>
       <main className="strip" ref={rail} onScroll={trackPosition} tabIndex={0}
         aria-label="Horizontal portfolio"
+        onClick={(event) => {
+          if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+          const index = chapters.findIndex(({ id }) => link?.hash === "#" + id);
+          if (index < 0) return;
+          event.preventDefault();
+          goTo(index);
+          const heading = rail.current?.children[index]?.querySelector<HTMLElement>("h1, h2");
+          if (heading) {
+            heading.tabIndex = -1;
+            heading.focus({ preventScroll: true });
+          }
+        }}
         onKeyDown={(event) => {
           if (event.target === event.currentTarget) navigate(event, active, false);
         }}>

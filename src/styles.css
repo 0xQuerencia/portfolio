@@ -14,7 +14,9 @@
   --sky: #0035fc;
   --coral: #fb503e;
   --inset: clamp(1.375rem, 8vw, 8rem);
-  --step: 87vw;
+  --step: min(65vw, 62rem);
+  --intro-width: 90vw;
+  --end-width: min(78vw, 75rem);
   --ruler-height: 5.25rem;
 }
 
@@ -60,6 +62,7 @@ a {
   grid-template-columns: repeat(6, var(--stop-width));
   margin-block-end: 0.625rem;
   user-select: none;
+  touch-action: pan-y;
 }
 
 .ruler::before {
@@ -89,7 +92,7 @@ a {
   display: block;
   position: relative;
   min-block-size: 2.75rem;
-  cursor: ew-resize;
+  cursor: grab;
   -webkit-user-drag: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -109,11 +112,15 @@ a {
   outline-offset: -4px;
 }
 
+.ruler:active .ruler-stop { cursor: grabbing; }
+
+.ruler-stop[aria-current] span,
 .ruler-stop:focus-visible span {
   opacity: 1;
 }
 
 @media (hover: hover) {
+  .ruler:has(.ruler-stop:not([aria-current]):hover) .ruler-stop[aria-current]:not(:focus-visible) span { opacity: 0; }
   .ruler-stop:hover span {
     opacity: 1;
   }
@@ -125,14 +132,9 @@ a {
   min-inline-size: 0;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-}
-
-.strip[data-scrubbing="true"] {
   scroll-behavior: auto;
-  scroll-snap-type: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
 }
 
 .strip:focus-visible {
@@ -140,7 +142,7 @@ a {
 }
 
 .strip::after {
-  flex: 0 0 calc(100vw - var(--step));
+  flex: 0 0 calc(100vw - var(--end-width));
   content: "";
 }
 
@@ -148,7 +150,6 @@ a {
   flex: 0 0 var(--step);
   min-inline-size: 0;
   overflow: auto;
-  scroll-snap-align: start;
   scrollbar-width: thin;
 }
 
@@ -161,7 +162,6 @@ a {
   padding: clamp(2rem, 7vh, 5rem) var(--inset);
 }
 
-.chapter h1,
 .chapter h2 {
   font-family: "Newsreader Variable", Georgia, serif;
   font-optical-sizing: auto;
@@ -172,52 +172,41 @@ a {
   overflow-wrap: anywhere;
 }
 
-.chapter h1 {
-  font-size: clamp(3.1rem, 8.2vw, 8.375rem);
-  text-wrap: balance;
-}
+.chapter-intro { flex-basis: var(--intro-width); }
 
 .chapter-intro .chapter-content {
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(1.5rem, 4.5vw, 5.25rem);
+  padding-inline: clamp(1.375rem, 7vw, 7rem);
 }
 
-.intro-copy {
-  min-inline-size: 0;
+.intro-frame { inline-size: 100%; }
+
+.intro-composition {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: clamp(1rem, 4vw, 4.5rem);
+  align-items: end;
+  margin-block-end: 1.5rem;
 }
 
-.readme-sky {
-  display: block;
-  justify-self: end;
-  inline-size: min(100%, 25rem);
-  block-size: auto;
-  margin-block-start: -2rem;
+#title-intro {
+  font-size: clamp(1.85rem, 4.05vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -0.04em;
 }
 
-.identity {
-  color: var(--ink);
-  margin-block-end: 1.25rem;
-  font-size: 0.9375rem;
-  font-weight: 650;
-  letter-spacing: 0.025em;
+#title-intro span { display: block; }
+#title-intro span:nth-child(even) { padding-inline-start: 0.69em; }
+.readme-print { display: block; inline-size: 100%; max-inline-size: 24rem; block-size: auto; justify-self: end; }
+
+.intro-links {
+  border-block-start: 1px solid var(--rule);
+  justify-content: start;
+  padding-block-start: 0.25rem;
 }
 
-.intro-line {
-  margin-block-start: 0.5rem;
-  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
-  letter-spacing: -0.045em;
-  line-height: 1.12;
-  max-inline-size: 24ch;
-  text-wrap: pretty;
-}
-
-.motto {
-  margin-block-start: 1rem;
-  color: var(--muted);
-  font-size: clamp(1rem, 1.8vw, 1.45rem);
-  text-wrap: balance;
-}
+.intro-links .intro-next { margin-inline-start: auto; display: inline-flex; gap: 0.75rem; align-items: center; }
+.intro-next span { display: inline-block; }
 
 .chapter-description {
   max-inline-size: 30ch;
@@ -242,9 +231,8 @@ a {
   overflow-wrap: anywhere;
 }
 
-.chapter-pixie {
-  background: #eae8e7;
-}
+.chapter:not(.chapter-intro) { border-inline-start: 1px solid var(--rule); }
+.chapter-pixie { flex-basis: min(74vw, 68rem); }
 
 .chapter-pixie .chapter-content {
   align-content: start;
@@ -261,9 +249,7 @@ a {
   border-block-start: 1px solid var(--rule);
 }
 
-.chapter-ripple {
-  background: #f8f7f6;
-}
+.chapter-ripple { flex-basis: min(75vw, 65rem); }
 
 .chapter-ripple .chapter-content {
   padding-inline-start: clamp(var(--inset), 16vw, 16rem);
@@ -276,7 +262,7 @@ a {
 }
 
 .chapter-contact {
-  background: #eae8e7;
+  flex-basis: var(--end-width);
 }
 
 .chapter-contact .chapter-description {
@@ -355,7 +341,9 @@ a {
 
 @media (max-width: 36rem) {
   :root {
-    --step: 91vw;
+    --step: 86vw;
+    --intro-width: 94vw;
+    --end-width: 92vw;
     --ruler-height: 4.25rem;
   }
 
@@ -363,20 +351,14 @@ a {
     gap: 0.875rem;
   }
 
-  .chapter-intro .chapter-content {
+  .intro-composition {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: clamp(1.5rem, 7vh, 3.25rem);
   }
 
-  .readme-sky {
-    justify-self: start;
-    inline-size: clamp(8rem, 44vw, 12rem);
-    margin-block-start: 0;
-  }
-
-  .identity {
-    margin-block-end: 0.75rem;
-  }
+  #title-intro { font-size: clamp(1.35rem, 7.35vw, 2.5rem); }
+  .readme-print { justify-self: start; max-inline-size: 17rem; inline-size: 90%; }
+  .chapter-pixie, .chapter-ripple { flex-basis: 90vw; }
 
   .chapter-pixie .chapter-content {
     padding-block-start: max(2rem, 15vh);

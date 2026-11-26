@@ -19,3 +19,9 @@ Self-hosted Newsreader Variable displays each chapter title with automatic optic
 The ruler covers the six chapters. Each stop reveals its name on keyboard focus or hover and links directly to a chapter. The desktop ruler supports drag, and the strip supports native horizontal input. Arrow keys, Home, and End navigate and chapter changes are announced after scrolling settles. Reduced motion makes jumps and copy-state changes immediate.
 
 The experiment contains a separate email link and copy button. Feedback preserves its footprint, announces the result, and leaves the address selectable when clipboard access is unavailable.
+
+### Interaction pass
+
+- [Rauno’s homepage](https://rauno.me/) treats the introduction as one typographic object. Querencia uses one type size and weight for the name and bio, with original README fragments supplying the visual identity.
+- [Field Notes 3](https://rauno.me/notes/3) prioritizes readable type and contrast while experimenting with the shape of the composition; [Field Notes 5](https://rauno.me/notes/5) demonstrates using the object itself as the control and giving it a forgiving hit area. The visible ruler is the control, not a decoration or a second navbar.
+- [Invisible Details](https://rauno.me/craft/interaction-design) and [Devouring Details: Next.js Dev Tools](https://devouringdetails.com/prototypes/nextjs-dev-tools) make the case for prompt feedback, interruptible gestures, and animation only when it communicates something. The strip has native horizontal scrolling; the ruler tracks unequal section widths and leaves the strip where released. Clicks and keys jump immediately to named sections, and the keyboard focus ring stays visible.
