@@ -32,10 +32,10 @@ The owner's own line: "I'd rather build it than pay for it." The site presents s
 
 ## Capabilities and Constraints
 
-- Single-page site: home, about, featured projects, Labs, and contact. The sections scroll sideways on desktop and stack vertically on mobile. The terminal prompt follows the active section.
-- Featured projects remain curated in `src/data.ts`, with pixl first. The five featured projects use a wide, centered 3×3 desktop bento (up to 1180px wide, 600–700px high) with equal tracks: PIXL tall left, X wide upper-right, Aether centered, Ripple wide bottom-left, and Pixie tall right. PIXL and Pixie have matching dimensions, as do X and Ripple. The wide grid preserves dark dotted cards, dashed outlines, blue tags, pixel headings, mono text, existing buttons, screenshots, and PIXL video. On narrower screens the aspect-ratio constraint is removed and cards reflow without overlaps. Keep the original dark dotted surfaces, dashed inner borders, blue tag outlines, pixel headings, mono descriptions, and simple Open site/View code buttons. Do not introduce themed card colors, decorative illustrations, gradients, or redesigns to this section. Labs is a separate interactive GitHub activity index with up to three selectable recent repositories and a single clear detail panel; visitors can switch between repositories, see the activity signal and last update, and open the source or an available project website. It is not another Projects card grid. It infers up to three recently worked-on unarchived, non-fork public repositories from the previous 14 days of public coding events and repo pushes, then ranks by recency and event count. The portfolio repository itself is excluded to prevent self-referential noise. Successful results are cached locally for 30 minutes; GitHub failure shows a fallback. Repo pushes alone do not prove who worked on the code.
-- Background is the earthrise piece from ascii.rest (MIT), rendered as a fixed layer.
-- Heading and navigation typography uses Pixelify Sans; paragraph and card copy use JetBrains Mono.
+- Single-page portfolio with a horizontal chapter strip and anchored Intro, Pixie, Pixl, Ripple, Experiments, and About & Contact stops.
+- Pixie leads the project chapters, followed by Pixl and Ripple. Each entry links to its public site and source repository.
+- Experiments points to the email copy interaction on the site. Contact offers an email link, a separate accessible copy action, and a GitHub link.
+- The Quiet Index design uses warm paper, charcoal text, cobalt links, and Newsreader display type, and DM Sans body text across the strip.
 
 ## Brand Commitments
 
@@ -45,8 +45,8 @@ The owner's own line: "I'd rather build it than pay for it." The site presents s
 
 ## Evidence on Hand
 
-- `src/data.ts`: six pinned repos with their descriptions and links. Two have live sites: pixie.support and pixl.hackclub.com.
-- Contact email: me@querencia.art, published on the site in the "Get in touch" panel at the owner's request.
+- Pixie: pixie.support and github.com/0xQuerencia/pixie.
+- Contact email: me@querencia.art, published on the site at the owner's request.
 - Absent, and not to be invented: photo, resume, testimonials, case studies, metrics, employer, school.
 
 ## Product Principles
