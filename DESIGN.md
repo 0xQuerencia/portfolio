@@ -1,19 +1,21 @@
 # Quiet Index
 
-## Reference comparison
+## Visual references
 
-| | Rauno’s live homepage | Querencia |
+| | Live reference | Querencia |
 | --- | --- | --- |
-| Desktop | A small, centered position ruler floats above an oversized opening panel. The next item is visible at the edge. | A fixed row of warm-gray ticks and a cobalt open bracket sits above a viewport-height editorial strip. The next chapter shares the paper field and peeks in at the right. |
-| Phone | The ruler remains above the composition. The opening panel and a sliver of the next panel remain visible at phone width. | The same sequence uses a 91vw chapter width. A swipe advances the strip, with independent vertical overflow inside a chapter on short screens. |
-| Visual language | A gray surround, white frames, a bright yellow circle, and oversized sans-serif text define its opening. | Warm paper, Georgia display type, DM Sans body text, and a cobalt accent. The introduction and work use an open composition with alternating paper fields, shifting alignment, and individual text treatments. |
+| Desktop position control | Rauno's small ruler tracks movement between large panels. | Six quiet major marks with smaller subdivisions. A fine cobalt needle follows fractional scroll progress, including during mouse drag. |
+| Phone navigation | A compact ruler sits above the strip, with the next panel partly visible. | The same layout uses 91vw chapters, native swipe, and ruler targets with a 44px height. |
+| Color and material | Ricky’s GitHub README uses cool paper, dark ink, a cobalt cloud study, and print details. | The intro uses the original sky and cloud layers as a standalone crop. The experiment gets a small coral tape detail. Paper fields and ink carry the project chapters. |
 
-Reference: [Rauno Freiberg’s live homepage](https://rauno.me/), observed in Chromium at 1440px and 390px.
+Sources: [Rauno Freiberg’s live homepage](https://rauno.me/), [README artwork](https://github.com/0xQuerencia/0xQuerencia/blob/main/assets/project-index.svg), and [README contact artwork](https://github.com/0xQuerencia/0xQuerencia/blob/main/assets/project-index-contact.svg).
 
-## Navigation
+## Type
 
-The ruler covers the whole strip. Each stop links to a chapter and reveals its name on keyboard focus or hover. The bracket follows the native horizontal scroll position. Arrow keys, Home, End, trackpad scroll, and touch swipe all work through the same strip. Direct chapter links open at the appropriate stop. The ruler and strip sit in a viewport-sized grid.
+Self-hosted Newsreader Variable displays each chapter title with automatic optical sizing. DM Sans drives reading, links, and controls. The intro separates the first line, supporting line, and exact motto.
 
-## Interaction
+## Navigation and interaction
 
-The experiments panel contains the separate email link and copy button. Copy feedback preserves its footprint, announces the result, and leaves the address selectable when clipboard access is unavailable. Reduced motion makes ruler jumps and copy-state changes immediate.
+The ruler covers the six chapters. Each stop reveals its name on keyboard focus or hover and links directly to a chapter. The desktop ruler supports drag, and the strip supports native horizontal input. Arrow keys, Home, and End navigate and chapter changes are announced after scrolling settles. Reduced motion makes jumps and copy-state changes immediate.
+
+The experiment contains a separate email link and copy button. Feedback preserves its footprint, announces the result, and leaves the address selectable when clipboard access is unavailable.

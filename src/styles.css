@@ -1,15 +1,18 @@
 :root {
   font-family: "DM Sans Variable", system-ui, sans-serif;
-  color: #191817;
-  background: #f5f2ed;
+  color: var(--ink);
+  background: #f1efee;
   color-scheme: light;
   font-synthesis: none;
   line-height: 1.5;
-  --paper: #f5f2ed;
+  --paper: #f1efee;
+  --ink: #171717;
   --muted: #54514e;
   --rule: #bfbab3;
   --control: #817b74;
-  --accent: #193ed5;
+  --accent: #1746ef;
+  --sky: #0035fc;
+  --coral: #fb503e;
   --inset: clamp(1.375rem, 8vw, 8rem);
   --step: 87vw;
   --ruler-height: 5.25rem;
@@ -48,33 +51,35 @@ a {
 
 .ruler {
   --position: 0;
-  --stop-width: clamp(2rem, 8vw, 2.75rem);
+  --stop-width: clamp(2.375rem, 8vw, 3.25rem);
   position: relative;
   z-index: 1;
   align-self: end;
   justify-self: center;
   display: grid;
   grid-template-columns: repeat(6, var(--stop-width));
-  margin-block-end: 0.5rem;
+  margin-block-end: 0.625rem;
+  user-select: none;
 }
 
 .ruler::before {
   position: absolute;
-  inset: 50% 0 auto;
-  block-size: 0.625rem;
-  transform: translateY(-50%);
-  background: repeating-linear-gradient(90deg, var(--control) 0 1px, transparent 1px 25%) 0 0 / var(--stop-width) 100%;
+  inset: auto 0 calc(50% - 5px);
+  block-size: 10px;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 0.5px), var(--control) 0 calc(50% + 0.5px), transparent 0) 0 100% / var(--stop-width) 10px repeat-x,
+    repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), var(--rule) 0 25%) calc(var(--stop-width) / 8) 100% / var(--stop-width) 5px repeat-x;
   content: "";
   pointer-events: none;
 }
 
 .ruler::after {
   position: absolute;
-  inset: calc(50% - 0.5rem) auto auto 0;
-  inline-size: var(--stop-width);
-  block-size: 1rem;
-  border: 2px solid var(--accent);
-  border-block-start: 0;
+  inset: auto auto calc(50% - 7px) calc(var(--stop-width) / 2 - 4px);
+  inline-size: 8px;
+  block-size: 19px;
+  border-bottom: 2px solid var(--sky);
+  background: linear-gradient(90deg, transparent 3px, var(--sky) 3px 5px, transparent 5px);
   transform: translateX(calc(var(--position) * var(--stop-width)));
   content: "";
   pointer-events: none;
@@ -84,11 +89,14 @@ a {
   display: block;
   position: relative;
   min-block-size: 2.75rem;
+  cursor: ew-resize;
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .ruler-stop span {
   position: absolute;
-  inset: auto auto 100% 50%;
+  inset: auto auto calc(50% + 0.825rem) 50%;
   transform: translateX(-50%);
   font-size: 0.8125rem;
   white-space: nowrap;
@@ -97,9 +105,18 @@ a {
   pointer-events: none;
 }
 
-.ruler-stop:focus-visible span,
-.ruler-stop:hover span {
+.ruler-stop:focus-visible {
+  outline-offset: -4px;
+}
+
+.ruler-stop:focus-visible span {
   opacity: 1;
+}
+
+@media (hover: hover) {
+  .ruler-stop:hover span {
+    opacity: 1;
+  }
 }
 
 .strip {
@@ -111,6 +128,11 @@ a {
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   scrollbar-width: none;
+}
+
+.strip[data-scrubbing="true"] {
+  scroll-behavior: auto;
+  scroll-snap-type: none;
 }
 
 .strip:focus-visible {
@@ -141,30 +163,53 @@ a {
 
 .chapter h1,
 .chapter h2 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 400;
+  font-family: "Newsreader Variable", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 510;
   font-size: clamp(3.25rem, 10vw, 10rem);
-  line-height: 0.91;
-  letter-spacing: -0.078em;
+  line-height: 0.96;
+  letter-spacing: -0.054em;
   overflow-wrap: anywhere;
 }
 
 .chapter h1 {
-  font-size: clamp(3.4rem, 11vw, 9.625rem);
+  font-size: clamp(3.1rem, 8.2vw, 8.375rem);
+  text-wrap: balance;
+}
+
+.chapter-intro .chapter-content {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4.5vw, 5.25rem);
+}
+
+.intro-copy {
+  min-inline-size: 0;
+}
+
+.readme-sky {
+  display: block;
+  justify-self: end;
+  inline-size: min(100%, 25rem);
+  block-size: auto;
+  margin-block-start: -2rem;
 }
 
 .identity {
-  color: var(--accent);
-  font-size: 1rem;
+  color: var(--ink);
+  margin-block-end: 1.25rem;
+  font-size: 0.9375rem;
   font-weight: 650;
   letter-spacing: 0.025em;
 }
 
 .intro-line {
-  font-size: clamp(1.25rem, 3.3vw, 3.125rem);
+  margin-block-start: 0.5rem;
+  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
   letter-spacing: -0.045em;
   line-height: 1.12;
-  text-wrap: balance;
+  max-inline-size: 24ch;
+  text-wrap: pretty;
 }
 
 .motto {
@@ -198,16 +243,12 @@ a {
 }
 
 .chapter-pixie {
-  background: #efebe4;
+  background: #eae8e7;
 }
 
 .chapter-pixie .chapter-content {
   align-content: start;
   padding-block-start: max(2rem, 17vh);
-}
-
-.chapter-pixie h2 {
-  color: var(--accent);
 }
 
 .chapter-pixl .chapter-content {
@@ -221,7 +262,7 @@ a {
 }
 
 .chapter-ripple {
-  background: #f0ede7;
+  background: #f8f7f6;
 }
 
 .chapter-ripple .chapter-content {
@@ -235,7 +276,7 @@ a {
 }
 
 .chapter-contact {
-  background: #efebe4;
+  background: #eae8e7;
 }
 
 .chapter-contact .chapter-description {
@@ -248,6 +289,19 @@ a {
   margin-block-start: 0.75rem;
   padding-block-start: 0.75rem;
   border-block-start: 1px solid var(--rule);
+  position: relative;
+}
+
+.copy-specimen::before {
+  position: absolute;
+  inset: -5px 1rem auto auto;
+  inline-size: 2.25rem;
+  block-size: 0.625rem;
+  background: var(--coral);
+  transform: rotate(-6deg);
+  clip-path: polygon(0 6%, 95% 0, 100% 94%, 4% 100%);
+  content: "";
+  pointer-events: none;
 }
 
 .email {
@@ -307,6 +361,21 @@ a {
 
   .chapter-content {
     gap: 0.875rem;
+  }
+
+  .chapter-intro .chapter-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .readme-sky {
+    justify-self: start;
+    inline-size: clamp(8rem, 44vw, 12rem);
+    margin-block-start: 0;
+  }
+
+  .identity {
+    margin-block-end: 0.75rem;
   }
 
   .chapter-pixie .chapter-content {

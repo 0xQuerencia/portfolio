@@ -65,10 +65,13 @@ const chapters = [
     id: "intro",
     label: "Intro",
     content: <>
-      <p className="identity">0xque</p>
-      <h1 id="title-intro">hey, i’m ricky.</h1>
-      <p className="intro-line">i build things i wish existed.</p>
-      <p className="motto">I'd rather build it than pay for it.</p>
+      <div className="intro-copy">
+        <p className="identity">0xque</p>
+        <h1 id="title-intro">hey, i’m ricky.</h1>
+        <p className="intro-line">i build things i wish existed.</p>
+        <p className="motto">I'd rather build it than pay for it.</p>
+      </div>
+      <img className="readme-sky" src="/readme-sky.svg" width="157" height="145" alt="" />
     </>,
   },
   {

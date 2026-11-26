@@ -35,7 +35,7 @@ The owner's own line: "I'd rather build it than pay for it." The site presents s
 - Single-page portfolio with a horizontal chapter strip and anchored Intro, Pixie, Pixl, Ripple, Experiments, and About & Contact stops.
 - Pixie leads the project chapters, followed by Pixl and Ripple. Each entry links to its public site and source repository.
 - Experiments points to the email copy interaction on the site. Contact offers an email link, a separate accessible copy action, and a GitHub link.
-- The Quiet Index design uses warm paper, charcoal text, cobalt links, and Georgia display type, and DM Sans body text across the strip.
+- The Quiet Index design uses warm paper, charcoal text, cobalt links, and Newsreader display type, and DM Sans body text across the strip.
 
 ## Brand Commitments
 
