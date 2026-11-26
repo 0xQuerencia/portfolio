@@ -176,8 +176,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
           event.stopPropagation();
         }}>
         <div className="map-readout" aria-hidden="true">
-          <span>{chapters[selected].label}</span>
-          <span>{String(selected + 1).padStart(2, "0")} / {String(chapters.length).padStart(2, "0")}</span>
+          {chapters[selected].label}
         </div>
         <div className="map-viewfinder" aria-hidden="true" />
         {chapters.map(({ id, label }, index) => (
@@ -193,8 +192,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
               goTo(index);
             }}
             onKeyDown={(event) => navigate(event, index, true)}>
-            <span className="map-landmark" aria-hidden="true" />
-            <span className="map-caption" aria-hidden="true">{id === "experiments" ? "Lab" : id === "contact" ? "Contact" : label}</span>
+            <span className="map-landmark" aria-hidden="true"><i /><i /><i /></span>
           </a>
         ))}
       </nav>

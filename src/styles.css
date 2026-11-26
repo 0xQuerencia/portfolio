@@ -53,92 +53,80 @@ a {
 
 .ruler {
   --progress: 0;
-  --stop-width: clamp(2.375rem, 9vw, 3.6rem);
+  --stop-width: 2rem;
+  --rail-centre: 1.375rem;
   position: relative;
   z-index: 1;
   align-self: end;
   justify-self: center;
   display: grid;
-  grid-template-rows: 1.35rem 2.75rem;
-  margin-block-end: 0.25rem;
+  grid-template-rows: 1.125rem 2.75rem;
+  margin-block-end: .45rem;
   user-select: none;
   touch-action: pan-y;
 }
 
 .map-readout {
   grid-column: 1 / -1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-inline: .25rem;
-  color: var(--ink);
-  font-size: .8125rem;
+  align-self: center;
+  justify-self: center;
+  font-size: .72rem;
   line-height: 1;
-  font-weight: 570;
-}
-
-.map-readout span + span {
+  font-weight: 520;
   color: var(--muted);
-  font-size: .6875rem;
-  font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.ruler::before {
-  position: absolute;
-  inset: auto calc(var(--stop-width) / 2) 2.01rem;
-  block-size: 1px;
-  background: var(--rule);
-  content: "";
-  pointer-events: none;
+.ruler:has(.ruler-stop:focus-visible) .map-readout,
+.ruler[data-scrubbing] .map-readout { opacity: 1; }
+
+@media (hover: hover) {
+  .ruler:hover .map-readout { opacity: 1; }
 }
 
 .map-viewfinder {
   position: absolute;
-  inset: auto auto 2.01rem calc(var(--stop-width) / 2 + var(--progress) * (100% - var(--stop-width)));
-  inline-size: .62rem;
-  block-size: .62rem;
+  inset: auto auto var(--rail-centre) calc(var(--stop-width) / 2 + var(--progress) * (100% - var(--stop-width)));
+  inline-size: calc(var(--stop-width) - 5px);
+  block-size: 15px;
   transform: translate(-50%, 50%);
-  outline: 1px solid var(--accent);
+  outline: 1px solid #66615d;
+  outline-offset: -1px;
   background: var(--paper);
-  border-radius: 50%;
   z-index: 2;
   pointer-events: none;
 }
 
+.map-viewfinder::after {
+  position: absolute;
+  inset: 3px 50% 3px auto;
+  inline-size: 1px;
+  background: var(--accent);
+  content: "";
+}
+
 .ruler-stop {
   display: grid;
-  grid-template-rows: 1.48rem 1rem;
-  justify-items: center;
-  align-items: center;
+  place-items: center;
   min-block-size: 2.75rem;
   cursor: grab;
   -webkit-user-drag: none;
-  color: var(--muted);
-  text-decoration: none;
 }
 
 .map-landmark {
-  inline-size: .36rem;
-  block-size: .36rem;
-  border: 1px solid var(--control);
-  background: var(--paper);
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+  padding-inline: 5px;
   pointer-events: none;
 }
 
-.map-caption {
-  font-size: clamp(.625rem, 2.15vw, .72rem);
-  letter-spacing: -.03em;
-  font-weight: 500;
-  line-height: 1;
-  pointer-events: none;
-}
-
-.ruler-stop[aria-current] .map-caption { font-weight: 670; }
-
+.map-landmark i { inline-size: 1px; block-size: 6px; background: #b6b0aa; }
+.map-landmark i:nth-child(2) { block-size: 12px; background: #918a84; }
+.ruler-stop:is(:hover, :focus-visible) .map-landmark i:nth-child(2) { background: var(--accent); }
 .ruler-stop:focus-visible { outline-offset: -3px; }
-.ruler-stop:is([aria-current], :hover, :focus-visible) { color: var(--accent); }
 .ruler[data-scrubbing] .ruler-stop { cursor: grabbing; }
 
 .strip {
