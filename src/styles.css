@@ -10,21 +10,14 @@
   --rule: #bfbab3;
   --control: #817b74;
   --accent: #193ed5;
-  --gutter: clamp(1.5rem, 7vw, 2rem);
+  --inset: clamp(1.375rem, 8vw, 8rem);
+  --step: 87vw;
+  --ruler-height: 5.25rem;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-body, h1, h2, h3, p, ul {
-  margin: 0;
-}
-
-ul {
-  padding: 0;
-  list-style: none;
-}
+body, h1, h2, p { margin: 0; }
 
 a {
   color: var(--accent);
@@ -34,20 +27,10 @@ a {
 
 :focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 4px;
+  outline-offset: 3px;
 }
 
-:where(main, section, article)[tabindex] {
-  scroll-margin-block-start: 1.5rem;
-}
-
-.page {
-  inline-size: min(45rem, calc(100% - 2 * var(--gutter)));
-  margin-inline: auto;
-  padding-block: 2.25rem 4rem;
-}
-
-.sr-only, .skip-link:not(:focus) {
+.sr-only {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -56,151 +39,220 @@ a {
   white-space: nowrap;
 }
 
-.skip-link:focus {
-  position: fixed;
-  z-index: 1;
-  inset: 1rem auto auto 1rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--paper);
-}
-
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-block-end: 1rem;
-  border-block-end: 1px solid var(--rule);
-}
-
-.site-header ul,
-.project-links,
-.contact-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.site-header ul {
-  gap: clamp(1rem, 3vw, 2rem);
-}
-
-.site-header a {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 2.75rem;
-  color: inherit;
-  text-decoration: none;
-}
-
-.site-header nav {
-  font-size: 1rem;
-}
-
-.wordmark {
-  font-size: 1.1875rem;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-}
-
-.intro {
-  padding: clamp(4.5rem, 7.8vw, 5.125rem) clamp(0rem, calc(11vw - 4.25rem), 2.5rem);
-}
-
-.intro h1 {
-  font-size: clamp(2.125rem, 6.2vw, 3.125rem);
-  font-weight: 560;
-  line-height: 1.12;
-  letter-spacing: -0.055em;
-  overflow-wrap: anywhere;
-}
-
-.intro h1 span {
-  display: block;
-}
-
-.intro p {
-  margin-block-start: 1.375rem;
-  color: var(--muted);
-  font-size: clamp(1.3125rem, 3.8vw, 1.6875rem);
-  line-height: 1.3;
-  letter-spacing: -0.03em;
-}
-
-.work {
+#root {
   display: grid;
-  grid-template-columns: 8rem 1fr;
-  align-items: baseline;
-  gap: 1rem;
-  padding-block: 1.375rem 1.0625rem;
-  border-block-end: 1px solid var(--rule);
+  grid-template-rows: var(--ruler-height) minmax(0, 1fr);
+  block-size: 100vh;
+  block-size: 100dvh;
 }
 
-.work h3 {
-  font-size: 1.5625rem;
-  font-weight: 650;
-  line-height: 1.2;
-  letter-spacing: -0.038em;
-}
-
-.work p, .experiments p, .about p {
-  color: var(--muted);
-  font-size: 1.125rem;
-  letter-spacing: -0.014em;
-}
-
-.project-links {
-  gap: 0 1.125rem;
-  font-size: 0.9375rem;
-}
-
-.project-links a, .github {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 2.75rem;
-}
-
-.experiments, .about, .contact {
-  margin-block-start: 2.5rem;
-}
-
-.section-title {
-  margin-block-end: 0.375rem;
-  color: var(--accent);
-  font-size: 1.3125rem;
-  font-weight: 550;
-  letter-spacing: -0.025em;
-}
-
-.work-index .section-title {
-  margin-block-end: 0.75rem;
-}
-
-.work:first-of-type {
-  border-block-start: 1px solid var(--rule);
-}
-
-.about p, .experiments p {
-  max-inline-size: 54ch;
-}
-
-.contact .section-title {
+.ruler {
+  --position: 0;
+  --stop-width: clamp(2rem, 8vw, 2.75rem);
+  position: relative;
+  z-index: 1;
+  align-self: end;
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(6, var(--stop-width));
   margin-block-end: 0.5rem;
 }
 
-.contact-actions {
-  gap: 0.5rem 1.125rem;
+.ruler::before {
+  position: absolute;
+  inset: 50% 0 auto;
+  block-size: 0.625rem;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, var(--control) 0 1px, transparent 1px 25%) 0 0 / var(--stop-width) 100%;
+  content: "";
+  pointer-events: none;
 }
 
-.email {
+.ruler::after {
+  position: absolute;
+  inset: calc(50% - 0.5rem) auto auto 0;
+  inline-size: var(--stop-width);
+  block-size: 1rem;
+  border: 2px solid var(--accent);
+  border-block-start: 0;
+  transform: translateX(calc(var(--position) * var(--stop-width)));
+  content: "";
+  pointer-events: none;
+}
+
+.ruler-stop {
+  display: block;
+  position: relative;
+  min-block-size: 2.75rem;
+}
+
+.ruler-stop span {
+  position: absolute;
+  inset: auto auto 100% 50%;
+  transform: translateX(-50%);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: var(--muted);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ruler-stop:focus-visible span,
+.ruler-stop:hover span {
+  opacity: 1;
+}
+
+.strip {
+  position: relative;
+  display: flex;
+  min-inline-size: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.strip:focus-visible {
+  outline-offset: -3px;
+}
+
+.strip::after {
+  flex: 0 0 calc(100vw - var(--step));
+  content: "";
+}
+
+.chapter {
+  flex: 0 0 var(--step);
+  min-inline-size: 0;
+  overflow: auto;
+  scroll-snap-align: start;
+  scrollbar-width: thin;
+}
+
+.chapter-content {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 1rem;
+  min-block-size: 100%;
+  padding: clamp(2rem, 7vh, 5rem) var(--inset);
+}
+
+.chapter h1,
+.chapter h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(3.25rem, 10vw, 10rem);
+  line-height: 0.91;
+  letter-spacing: -0.078em;
+  overflow-wrap: anywhere;
+}
+
+.chapter h1 {
+  font-size: clamp(3.4rem, 11vw, 9.625rem);
+}
+
+.identity {
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: 0.025em;
+}
+
+.intro-line {
+  font-size: clamp(1.25rem, 3.3vw, 3.125rem);
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.motto {
+  margin-block-start: 1rem;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.8vw, 1.45rem);
+  text-wrap: balance;
+}
+
+.chapter-description {
+  max-inline-size: 30ch;
+  color: var(--muted);
+  font-size: clamp(1.125rem, 2.4vw, 2.25rem);
+  line-height: 1.25;
+  letter-spacing: -0.026em;
+  text-wrap: pretty;
+}
+
+.links, .contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.375rem;
+}
+
+.links a, .email {
   display: inline-flex;
   align-items: center;
   min-block-size: 2.75rem;
-  max-inline-size: 100%;
-  font-size: 1.3125rem;
-  font-weight: 550;
-  letter-spacing: -0.025em;
   overflow-wrap: anywhere;
+}
+
+.chapter-pixie {
+  background: #efebe4;
+}
+
+.chapter-pixie .chapter-content {
+  align-content: start;
+  padding-block-start: max(2rem, 17vh);
+}
+
+.chapter-pixie h2 {
+  color: var(--accent);
+}
+
+.chapter-pixl .chapter-content {
+  align-content: end;
+  padding-block-end: max(2rem, 17vh);
+}
+
+.project-detail {
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--rule);
+}
+
+.chapter-ripple {
+  background: #f0ede7;
+}
+
+.chapter-ripple .chapter-content {
+  padding-inline-start: clamp(var(--inset), 16vw, 16rem);
+}
+
+.chapter-experiments h2,
+.chapter-contact h2 {
+  font-size: clamp(2.5rem, 7vw, 6.5rem);
+  letter-spacing: -0.066em;
+}
+
+.chapter-contact {
+  background: #efebe4;
+}
+
+.chapter-contact .chapter-description {
+  max-inline-size: 36ch;
+  font-size: clamp(1.1rem, 2vw, 1.65rem);
+}
+
+.copy-specimen {
+  inline-size: min(100%, 28rem);
+  margin-block-start: 0.75rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid var(--rule);
+}
+
+.email {
+  font-size: clamp(1rem, 3vw, 1.375rem);
+  font-weight: 550;
 }
 
 .copy {
@@ -214,7 +266,6 @@ a {
   color: inherit;
   font: inherit;
   font-size: 0.9375rem;
-  line-height: 1.2;
   cursor: pointer;
   transition: transform 100ms ease-out;
 }
@@ -224,18 +275,14 @@ a {
   transition: opacity 140ms ease-out;
 }
 
-.copy span + span {
-  color: var(--accent);
-  opacity: 0;
-  visibility: hidden;
-}
-
+.copy span + span,
 .copy[data-status="copied"] span:first-child {
   opacity: 0;
   visibility: hidden;
 }
 
 .copy[data-status="copied"] span + span {
+  color: var(--accent);
   opacity: 1;
   visibility: visible;
 }
@@ -245,215 +292,38 @@ a {
 }
 
 .copy-status {
-  min-block-size: 1.35em;
-  margin-block-start: 0.25rem;
+  min-block-size: 2.7em;
+  margin-block-start: 0.375rem;
   color: var(--muted);
   font-size: 0.875rem;
   line-height: 1.35;
 }
 
-.github {
-  font-size: 0.9375rem;
-}
-
-@media (hover: hover) {
-  .site-header a:hover {
-    text-decoration: underline;
-  }
-
-  .copy:hover {
-    border-color: currentColor;
-    color: var(--accent);
-  }
-}
-
 @media (max-width: 36rem) {
-  .page {
-    padding-block: 1.375rem 2.75rem;
+  :root {
+    --step: 91vw;
+    --ruler-height: 4.25rem;
   }
 
-  .site-header {
-    display: grid;
-    justify-content: start;
-    gap: 0.5rem;
-    padding-block-end: 0.875rem;
+  .chapter-content {
+    gap: 0.875rem;
   }
 
-  .site-header ul {
-    display: grid;
-    gap: 0;
+  .chapter-pixie .chapter-content {
+    padding-block-start: max(2rem, 15vh);
   }
 
-  .site-header nav a {
-    min-block-size: 2.375rem;
+  .chapter-pixl .chapter-content {
+    padding-block-end: max(2rem, 15vh);
   }
 
-  .intro {
-    padding: 2.375rem 0 2.625rem;
-  }
-
-  .intro p {
-    max-inline-size: 14rem;
-    margin-block-start: 1.125rem;
-  }
-
-  .intro h1 span {
-    text-wrap: balance;
-  }
-
-  .work {
-    grid-template-columns: 1fr;
-    gap: 0.3125rem;
-    padding-block: 1.25rem 0.875rem;
-  }
-
-  .work p, .experiments p, .about p {
-    font-size: 1.0625rem;
-  }
-
-  .experiments, .about, .contact {
-    margin-block-start: 2rem;
-  }
-
-  .copy-status {
-    min-block-size: 2.7em;
+  .chapter-ripple .chapter-content {
+    padding-inline-start: var(--inset);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .copy, .copy span {
-    transform: none;
-    transition: none;
-  }
-
-  .copy:active {
-    transform: none;
-    border-color: var(--accent);
-  }
-}
-
-.index-rail {
-  container-type: inline-size;
-  margin-block: 1rem 3rem;
-}
-
-.rail-controls {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.rail-controls::before {
-  position: absolute;
-  inset: auto 0 0;
-  block-size: 7px;
-  background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 12px);
-  content: "";
-  pointer-events: none;
-}
-
-.rail-controls button {
-  display: grid;
-  place-items: center;
-  position: relative;
-  min-block-size: 44px;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.rail-controls button[aria-current] {
-  color: var(--accent);
-  font-weight: 650;
-}
-
-.rail-controls::after {
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline-start: calc(12.5% - 0.875rem);
-  inline-size: 1.75rem;
-  block-size: 7px;
-  border: 2px solid var(--accent);
-  border-block-start: 0;
-  transform: translateX(calc(var(--stop) * (100cqi / 4)));
-  transition: transform 140ms ease-out;
-  pointer-events: none;
-  content: "";
-}
-
-.rail-controls button:hover span {
-  text-decoration: underline;
-}
-
-.rail-viewport {
-  position: relative;
-  display: flex;
-  gap: 0.75rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-}
-
-.rail-viewport::after {
-  flex: 0 0 max(0px, calc(6% - 0.75rem));
-  content: "";
-}
-
-.rail-panel {
-  flex: 0 0 94%;
-  display: grid;
-  align-content: center;
-  min-block-size: 18rem;
-  scroll-snap-align: start;
-  border-block-end: 1px solid var(--rule);
-}
-
-.rail-panel + .rail-panel {
-  border-inline-start: 1px solid var(--rule);
-}
-
-.rail-feature {
-  gap: 0.75rem;
-  padding: 2rem clamp(1rem, 5vw, 3rem);
-}
-
-.rail-feature h2 {
-  font-size: clamp(2rem, 5vw, 3.125rem);
-  letter-spacing: -0.05em;
-  line-height: 1.1;
-}
-
-.rail-feature p {
-  color: var(--muted);
-  font-size: 1.125rem;
-}
-
-.rail-feature a {
-  justify-self: start;
-}
-
-.rail-pixl h2 {
-  color: var(--accent);
-}
-
-.rail-pixl {
-  align-content: end;
-}
-
-.rail-experiments {
-  align-content: start;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rail-viewport {
-    scroll-behavior: auto;
-  }
-
-  .rail-controls::after {
-    transition: none;
-  }
+  .strip { scroll-behavior: auto; }
+  .copy, .copy span { transition: none; }
+  .copy:active { transform: none; }
 }

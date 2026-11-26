@@ -5,7 +5,7 @@ const email = "me@querencia.art";
 
 type CopyStatus = "idle" | "copied" | "failed";
 
-function Contact() {
+function CopyEmail() {
   const address = useRef<HTMLAnchorElement>(null);
   const resetTimer = useRef<number>(undefined);
   const copying = useRef(false);
@@ -38,8 +38,7 @@ function Contact() {
   }
 
   return (
-    <section className="contact" id="contact" aria-labelledby="contact-heading" tabIndex={-1}>
-      <h2 className="section-title" id="contact-heading">Contact</h2>
+    <div className="copy-specimen">
       <div className="contact-actions">
         <a className="email" href={`mailto:${email}`} ref={address}>{email}</a>
         <button
@@ -57,81 +56,82 @@ function Contact() {
         {status === "copied" && <span className="sr-only">Email address copied.</span>}
         {status === "failed" && "Clipboard unavailable. You can copy the address manually."}
       </p>
-      <a className="github" href="https://github.com/0xQuerencia">GitHub</a>
-    </section>
+    </div>
   );
 }
 
+const chapters = [
+  {
+    id: "intro",
+    label: "Intro",
+    content: <>
+      <p className="identity">0xque</p>
+      <h1 id="title-intro">hey, i’m ricky.</h1>
+      <p className="intro-line">i build things i wish existed.</p>
+      <p className="motto">I'd rather build it than pay for it.</p>
+    </>,
+  },
+  {
+    id: "pixie",
+    label: "Pixie",
+    content: <>
+      <h2 id="title-pixie">Pixie</h2>
+      <p className="chapter-description">I built a Slack support bot for Hack Club programs.</p>
+      <div className="links">
+        <a href="https://pixie.support">Open Pixie</a>
+        <a href="https://github.com/0xQuerencia/pixie">View source</a>
+      </div>
+    </>,
+  },
+  {
+    id: "pixl",
+    label: "Pixl",
+    content: <>
+      <h2 id="title-pixl">Pixl</h2>
+      <div className="project-detail">
+        <p className="chapter-description">I contributed to Hack Club’s pixel-themed You Ship, We Ship program, including fixes for how projects earn pixel credits.</p>
+        <div className="links">
+          <a href="https://pixl.hackclub.com">Open Pixl</a>
+          <a href="https://github.com/hackclub/pixl">View source</a>
+        </div>
+      </div>
+    </>,
+  },
+  {
+    id: "ripple",
+    label: "Ripple",
+    content: <>
+      <h2 id="title-ripple">Ripple</h2>
+      <p className="chapter-description">I made a tool for exploring what-if questions by tracing chains of cause and effect.</p>
+      <div className="links">
+        <a href="https://ripple.querencia.art">Open Ripple</a>
+        <a href="https://github.com/0xQuerencia/ripple">View source</a>
+      </div>
+    </>,
+  },
+  {
+    id: "experiments",
+    label: "Experiments",
+    content: <>
+      <h2 id="title-experiments">Experiments</h2>
+      <p className="chapter-description">I wanted a copy button that gives feedback without moving the page.</p>
+      <CopyEmail />
+    </>,
+  },
+  {
+    id: "contact",
+    label: "About & Contact",
+    content: <>
+      <h2 id="title-contact">About &amp; Contact</h2>
+      <p className="chapter-description">I’m Ricky Parmar, a student developer from India. I like tinkering with Linux, desktop workflows, and small tools for problems I run into.</p>
+      <div className="links">
+        <a href={`mailto:${email}`}>{email}</a>
+        <a href="https://github.com/0xQuerencia">GitHub</a>
+      </div>
+    </>,
+  },
+];
+
 export default function App() {
-  useEffect(() => {
-    const fragment = window.location.hash.slice(1);
-    document.getElementById(fragment)?.scrollIntoView();
-  }, []);
-
-  return (
-    <div className="page" id="top">
-      <a className="skip-link" href="#main">Skip to content</a>
-      <header className="site-header">
-        <a className="wordmark" href="#top">querencia.art</a>
-        <nav aria-label="Main">
-          <ul>
-            <li><a href="#work">work</a></li>
-            <li><a href="#experiments">experiments</a></li>
-            <li><a href="#about">about</a></li>
-            <li><a href="#contact">contact</a></li>
-          </ul>
-        </nav>
-      </header>
-
-      <main id="main" tabIndex={-1}>
-        <IndexRail />
-
-        <section className="work-index" id="work" aria-labelledby="work-heading" tabIndex={-1}>
-          <h2 className="section-title" id="work-heading">Selected Work</h2>
-          <article className="work" id="pixie" tabIndex={-1}>
-            <h3>Pixie</h3>
-            <div>
-              <p>I built a Slack support bot for Hack Club programs.</p>
-              <ul className="project-links" aria-label="Pixie links">
-                <li><a href="https://pixie.support">Open Pixie</a></li>
-                <li><a href="https://github.com/0xQuerencia/pixie">View source</a></li>
-              </ul>
-            </div>
-          </article>
-          <article className="work" id="pixl" tabIndex={-1}>
-            <h3>Pixl</h3>
-            <div>
-              <p>I contributed to Hack Club’s pixel-themed You Ship, We Ship program, including fixes for how projects earn pixel credits.</p>
-              <ul className="project-links" aria-label="Pixl links">
-                <li><a href="https://pixl.hackclub.com">Open Pixl</a></li>
-                <li><a href="https://github.com/hackclub/pixl">View source</a></li>
-              </ul>
-            </div>
-          </article>
-          <article className="work" id="ripple" tabIndex={-1}>
-            <h3>Ripple</h3>
-            <div>
-              <p>I made a tool for exploring what-if questions by tracing chains of cause and effect.</p>
-              <ul className="project-links" aria-label="Ripple links">
-                <li><a href="https://ripple.querencia.art">Open Ripple</a></li>
-                <li><a href="https://github.com/0xQuerencia/ripple">View source</a></li>
-              </ul>
-            </div>
-          </article>
-        </section>
-
-        <section className="experiments" id="experiments" aria-labelledby="experiments-heading" tabIndex={-1}>
-          <h2 className="section-title" id="experiments-heading">Experiments</h2>
-          <p>I wanted a copy button that gives feedback without moving the page. <a href="#contact">Try it below</a>.</p>
-        </section>
-
-        <section className="about" id="about" aria-labelledby="about-heading" tabIndex={-1}>
-          <h2 className="section-title" id="about-heading">About</h2>
-          <p>I’m Ricky Parmar, a student developer from India. I like tinkering with Linux, desktop workflows, and small tools for problems I run into.</p>
-        </section>
-
-        <Contact />
-      </main>
-    </div>
-  );
+  return <IndexRail chapters={chapters} />;
 }

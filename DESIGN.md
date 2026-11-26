@@ -1,29 +1,19 @@
 # Quiet Index
 
-## Direction
+## Reference comparison
 
-Follow the approved Quiet Index mockup: a warm paper background, typeset introduction, a ruled work index, and short sections for experiments, about, and contact. The page is an index of Ricky's work and a way to reach him.
+| | Rauno’s live homepage | Querencia |
+| --- | --- | --- |
+| Desktop | A small, centered position ruler floats above an oversized opening panel. The next item is visible at the edge. | A fixed row of warm-gray ticks and a cobalt open bracket sits above a viewport-height editorial strip. The next chapter shares the paper field and peeks in at the right. |
+| Phone | The ruler remains above the composition. The opening panel and a sliver of the next panel remain visible at phone width. | The same sequence uses a 91vw chapter width. A swipe advances the strip, with independent vertical overflow inside a chapter on short screens. |
+| Visual language | A gray surround, white frames, a bright yellow circle, and oversized sans-serif text define its opening. | Warm paper, Georgia display type, DM Sans body text, and a cobalt accent. The introduction and work use an open composition with alternating paper fields, shifting alignment, and individual text treatments. |
 
-## Color
+Reference: [Rauno Freiberg’s live homepage](https://rauno.me/), observed in Chromium at 1440px and 390px.
 
-Paper `#f5f2ed`, ink `#191817`, muted ink `#54514e`, rule `#bfbab3`, control border `#817b74`, cobalt `#193ed5`. Use cobalt for inline actions and keyboard focus. Keep ordinary underlines on inline links.
+## Navigation
 
-## Typography
+The ruler covers the whole strip. Each stop links to a chapter and reveals its name on keyboard focus or hover. The bracket follows the native horizontal scroll position. Arrow keys, Home, End, trackpad scroll, and touch swipe all work through the same strip. Direct chapter links open at the appropriate stop. The ruler and strip sit in a viewport-sized grid.
 
-DM Sans with a system fallback. Hero 34–50px with close tracking and a manual break after the greeting. Motto 21–27px. Work title 25px, body 17–19px, navigation and utility links 15–16px.
+## Interaction
 
-## Layout
-
-The document owns vertical scrolling. The header, work entry, and contact share a centered 720px measure with fluid 24–32px gutters. Inset the wide hero by 40px; align it to the page edge on narrow screens. Stack mobile navigation and place the project description below its name. Use individual, generously sized text links.
-
-## Primitives
-
-The page uses native anchors, hairlines between work entries, and a single outlined button. The section hashes work with the browser's native fragment navigation. Each hash destination can receive focus.
-
-## Motion and accessibility
-
-The email address and Copy email button act independently. Overlay the button labels in a grid to reserve the widest label. At rest show Copy email, on success show Copied, and on failure highlight the address for manual copying and show instructions in a reserved status row. Announce the result in a polite live region. Use a 100ms press transition and a 140ms label fade with immediate state changes for reduced motion. Use a visible 2px focus outline.
-
-## Index Rail
-
-Four panels sit in a native scroll-snap gallery at the top. A ruler marks the active panel, and the next panel peeks into view when there is one. Each stop is labeled and works by click, tap, Arrow keys, Home, or End. Native touch scrolling stays inside the rail. Reduced-motion users get immediate jumps.
+The experiments panel contains the separate email link and copy button. Copy feedback preserves its footprint, announces the result, and leaves the address selectable when clipboard access is unavailable. Reduced motion makes ruler jumps and copy-state changes immediate.

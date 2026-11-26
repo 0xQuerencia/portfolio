@@ -1,80 +1,84 @@
-import { useRef, useState, type CSSProperties, type KeyboardEvent, type UIEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
-const stops = ["Intro", "Pixie", "Pixl", "Experiments"];
+type Chapter = { id: string; label: string; content: ReactNode };
 
-export default function IndexRail() {
-  const viewport = useRef<HTMLDivElement>(null);
-  const controls = useRef<HTMLDivElement>(null);
+export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
+  const rail = useRef<HTMLDivElement>(null);
+  const ruler = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
 
+  useEffect(() => {
+    function followHash() {
+      const hash = window.location.hash.slice(1);
+      const aliases: Record<string, string> = { work: "pixie", about: "contact", top: "intro" };
+      const index = chapters.findIndex(({ id }) => id === (aliases[hash] ?? hash));
+      const panel = rail.current?.children[index] as HTMLElement | undefined;
+      if (panel) rail.current?.scrollTo({ left: panel.offsetLeft, behavior: "instant" });
+    }
+
+    followHash();
+    window.addEventListener("hashchange", followHash);
+    return () => window.removeEventListener("hashchange", followHash);
+  }, [chapters]);
+
   function goTo(index: number) {
-    const rail = viewport.current;
-    const panel = rail?.children[index] as HTMLElement | undefined;
-    if (rail && panel) rail.scrollTo({ left: panel.offsetLeft });
+    const panel = rail.current?.children[index] as HTMLElement | undefined;
+    if (!panel) return;
+    const hash = "#" + chapters[index].id;
+    if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+    rail.current?.scrollTo({ left: panel.offsetLeft });
   }
 
-  function trackPosition(event: UIEvent<HTMLDivElement>) {
-    const rail = event.currentTarget;
-    const nearest = Array.from(rail.children).reduce((best, panel, index) => {
-      const distance = Math.abs((panel as HTMLElement).offsetLeft - rail.scrollLeft);
-      return distance < best.distance ? { index, distance } : best;
-    }, { index: 0, distance: Infinity });
-    setActive(nearest.index);
+  function trackPosition() {
+    const track = rail.current;
+    const stride = (track?.children[1] as HTMLElement | undefined)?.offsetLeft;
+    if (!track || !stride) return;
+    const position = Math.min(chapters.length - 1, Math.max(0, track.scrollLeft / stride));
+    ruler.current?.style.setProperty("--position", String(position));
+    setActive(Math.round(position));
   }
 
   function navigate(event: KeyboardEvent, index: number, moveFocus: boolean) {
     const directions: Record<string, number> = {
       ArrowLeft: Math.max(0, index - 1),
-      ArrowRight: Math.min(stops.length - 1, index + 1),
+      ArrowRight: Math.min(chapters.length - 1, index + 1),
       Home: 0,
-      End: stops.length - 1,
+      End: chapters.length - 1,
     };
     const next = directions[event.key];
     if (typeof next !== "number") return;
     event.preventDefault();
     goTo(next);
-    if (moveFocus) (controls.current?.children[next] as HTMLButtonElement | undefined)?.focus();
+    if (moveFocus) ruler.current?.querySelectorAll("a")[next]?.focus();
   }
 
   return (
-    <section className="index-rail" aria-label="Index Rail">
-      <div className="rail-controls" ref={controls} style={{ "--stop": active } as CSSProperties} role="group" aria-label="Choose an index panel">
-        {stops.map((name, index) => (
-          <button key={name} type="button" aria-controls={`rail-panel-${index}`}
-            aria-current={active === index ? "true" : undefined}
-            onClick={() => goTo(index)} onKeyDown={(event) => navigate(event, index, true)}>
-            <span>{name}</span>
-          </button>
+    <>
+      <nav className="ruler" ref={ruler} aria-label="Portfolio chapters">
+        {chapters.map(({ id, label }, index) => (
+          <a key={id} className="ruler-stop" href={`#${id}`}
+            aria-current={active === index ? "location" : undefined}
+            onClick={(event) => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
+              goTo(index);
+            }}
+            onKeyDown={(event) => navigate(event, index, true)}>
+            <span>{label}</span>
+          </a>
         ))}
-      </div>
-      <div className="rail-viewport" ref={viewport} onScroll={trackPosition} tabIndex={0}
-        role="group" aria-label="Index panels"
+      </nav>
+      <main className="strip" ref={rail} onScroll={trackPosition} tabIndex={0}
+        aria-label="Horizontal portfolio"
         onKeyDown={(event) => {
           if (event.target === event.currentTarget) navigate(event, active, false);
         }}>
-        <section className="intro rail-panel" id="rail-panel-0" aria-labelledby="intro-heading">
-          <h1 id="intro-heading">
-            <span>hey, i’m ricky.</span>
-            <span>i build things i wish existed.</span>
-          </h1>
-          <p>I'd rather build it than pay for it.</p>
-        </section>
-        <section className="rail-panel rail-feature" id="rail-panel-1" aria-labelledby="rail-pixie">
-          <h2 id="rail-pixie">Pixie</h2>
-          <p>Slack support for Hack Club programs.</p>
-          <a href="#pixie">See Pixie in Selected Work</a>
-        </section>
-        <section className="rail-panel rail-feature rail-pixl" id="rail-panel-2" aria-labelledby="rail-pixl">
-          <h2 id="rail-pixl">Pixl</h2>
-          <p>I contributed to Hack Club’s pixel-themed You Ship, We Ship program.</p>
-          <a href="#pixl">See Pixl in Selected Work</a>
-        </section>
-        <section className="rail-panel rail-feature rail-experiments" id="rail-panel-3" aria-labelledby="rail-experiments">
-          <h2 id="rail-experiments">Experiments</h2>
-          <p>A copy button that gives feedback in place.</p>
-          <a href="#experiments">Try the experiment</a>
-        </section>
-      </div>
-    </section>
+        {chapters.map(({ id, content }) => (
+          <section key={id} className={`chapter chapter-${id}`} id={id} aria-labelledby={`title-${id}`}>
+            <div className="chapter-content">{content}</div>
+          </section>
+        ))}
+      </main>
+    </>
   );
 }
