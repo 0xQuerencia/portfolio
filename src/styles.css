@@ -328,3 +328,129 @@ a {
     border-color: var(--accent);
   }
 }
+
+.index-rail {
+  container-type: inline-size;
+  margin-block: 1rem 3rem;
+}
+
+.rail-controls {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rail-controls::before {
+  position: absolute;
+  inset: auto 0 0;
+  block-size: 7px;
+  background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 12px);
+  content: "";
+  pointer-events: none;
+}
+
+.rail-controls button {
+  display: grid;
+  place-items: center;
+  position: relative;
+  min-block-size: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.rail-controls button[aria-current] {
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.rail-controls::after {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: calc(12.5% - 0.875rem);
+  inline-size: 1.75rem;
+  block-size: 7px;
+  border: 2px solid var(--accent);
+  border-block-start: 0;
+  transform: translateX(calc(var(--stop) * (100cqi / 4)));
+  transition: transform 140ms ease-out;
+  pointer-events: none;
+  content: "";
+}
+
+.rail-controls button:hover span {
+  text-decoration: underline;
+}
+
+.rail-viewport {
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.rail-viewport::after {
+  flex: 0 0 max(0px, calc(6% - 0.75rem));
+  content: "";
+}
+
+.rail-panel {
+  flex: 0 0 94%;
+  display: grid;
+  align-content: center;
+  min-block-size: 18rem;
+  scroll-snap-align: start;
+  border-block-end: 1px solid var(--rule);
+}
+
+.rail-panel + .rail-panel {
+  border-inline-start: 1px solid var(--rule);
+}
+
+.rail-feature {
+  gap: 0.75rem;
+  padding: 2rem clamp(1rem, 5vw, 3rem);
+}
+
+.rail-feature h2 {
+  font-size: clamp(2rem, 5vw, 3.125rem);
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+
+.rail-feature p {
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+
+.rail-feature a {
+  justify-self: start;
+}
+
+.rail-pixl h2 {
+  color: var(--accent);
+}
+
+.rail-pixl {
+  align-content: end;
+}
+
+.rail-experiments {
+  align-content: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-viewport {
+    scroll-behavior: auto;
+  }
+
+  .rail-controls::after {
+    transition: none;
+  }
+}

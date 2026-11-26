@@ -1,3 +1,4 @@
+import IndexRail from "./IndexRail";
 import { useEffect, useRef, useState } from "react";
 
 const email = "me@querencia.art";
@@ -78,13 +79,7 @@ export default function App() {
       </header>
 
       <main id="main" tabIndex={-1}>
-        <section className="intro" aria-labelledby="intro-heading">
-          <h1 id="intro-heading">
-            <span>hey, i’m ricky.</span>
-            <span>i build things i wish existed.</span>
-          </h1>
-          <p>I'd rather build it than pay for it.</p>
-        </section>
+        <IndexRail />
 
         <section className="work-index" id="work" aria-labelledby="work-heading" tabIndex={-1}>
           <h2 className="section-title" id="work-heading">Selected Work</h2>

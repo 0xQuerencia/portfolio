@@ -23,3 +23,7 @@ The page uses native anchors, hairlines between work entries, and a single outli
 ## Motion and accessibility
 
 The email address and Copy email button act independently. Overlay the button labels in a grid to reserve the widest label. At rest show Copy email, on success show Copied, and on failure highlight the address for manual copying and show instructions in a reserved status row. Announce the result in a polite live region. Use a 100ms press transition and a 140ms label fade with immediate state changes for reduced motion. Use a visible 2px focus outline.
+
+## Index Rail
+
+Four panels sit in a native scroll-snap gallery at the top. A ruler marks the active panel, and the next panel peeks into view when there is one. Each stop is labeled and works by click, tap, Arrow keys, Home, or End. Native touch scrolling stays inside the rail. Reduced-motion users get immediate jumps.
