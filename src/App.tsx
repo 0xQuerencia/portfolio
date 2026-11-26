@@ -63,6 +63,11 @@ function Contact() {
 }
 
 export default function App() {
+  useEffect(() => {
+    const fragment = window.location.hash.slice(1);
+    document.getElementById(fragment)?.scrollIntoView();
+  }, []);
+
   return (
     <div className="page" id="top">
       <a className="skip-link" href="#main">Skip to content</a>
