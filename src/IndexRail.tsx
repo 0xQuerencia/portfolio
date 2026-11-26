@@ -22,14 +22,16 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   const ruler = useRef<HTMLElement>(null);
   const scrub = useRef<Scrub | null>(null);
   const suppressClick = useRef(false);
+  const wheelTimer = useRef<number>(undefined);
   const [active, setActive] = useState(0);
 
   function trackPosition() {
     const track = rail.current;
     if (!track) return;
     const position = rulerPosition(stopsFor(track), track.scrollLeft);
-    ruler.current?.style.setProperty("--position", String(position));
     setActive(Math.round(position));
+    const offset = position / Math.max(1, chapters.length - 1);
+    ruler.current?.style.setProperty("--progress", String(offset));
   }
 
   useEffect(() => {
@@ -44,12 +46,36 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       trackPosition();
     }
 
+    function moveOnWheel(event: WheelEvent) {
+      if (!track || event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+
+      // A short viewport or long chapter can scroll vertically before advancing the strip.
+      const chapter = (event.target as Element).closest<HTMLElement>(".chapter");
+      if (chapter) {
+        const remaining = chapter.scrollHeight - chapter.clientHeight - chapter.scrollTop;
+        if (event.deltaY > 0 ? remaining > 1 : chapter.scrollTop > 1) return;
+      }
+      if (event.cancelable) event.preventDefault();
+      const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? track.clientWidth : 1;
+      const before = track.scrollLeft;
+      track.scrollLeft += event.deltaY * unit;
+      if (before === track.scrollLeft) return;
+      track.dataset.moving = "true";
+      window.clearTimeout(wheelTimer.current);
+      wheelTimer.current = window.setTimeout(() => { delete track.dataset.moving; }, 115);
+    }
+
     followHash();
+    track.addEventListener("wheel", moveOnWheel, { passive: false });
     const observer = new ResizeObserver(trackPosition);
     observer.observe(track);
     window.addEventListener("hashchange", followHash);
     return () => {
       observer.disconnect();
+      track.removeEventListener("wheel", moveOnWheel);
+      window.clearTimeout(wheelTimer.current);
       window.removeEventListener("hashchange", followHash);
     };
   }, [chapters]);
@@ -59,6 +85,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     if (!track || !chapters[index]) return;
     const hash = "#" + chapters[index].id;
     if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+    delete track.dataset.moving;
     track.scrollLeft = stopsFor(track)[index];
     trackPosition();
   }
@@ -82,6 +109,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       gesture.started = true;
       suppressClick.current = true;
       event.currentTarget.setPointerCapture(event.pointerId);
+      track.dataset.moving = "true";
     }
     const bounds = event.currentTarget.getBoundingClientRect();
     const stops = stopsFor(track);
@@ -93,7 +121,9 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   }
 
   function endScrub(event: PointerEvent<HTMLElement>) {
-    if (scrub.current?.pointerId === event.pointerId) scrub.current = null;
+    if (scrub.current?.pointerId !== event.pointerId) return;
+    if (rail.current) delete rail.current.dataset.moving;
+    scrub.current = null;
   }
 
   function navigate(event: KeyboardEvent, index: number, moveFocus: boolean) {

@@ -68,10 +68,11 @@ const chapters = [
       <div className="intro-frame">
         <div className="intro-composition">
           <h1 id="title-intro">
-            <span>Ricky Parmar is a</span>{" "}
-            <span>developer from India</span>{" "}
-            <span>making Linux tools</span>{" "}
-            <span>and low-poly games.</span>
+            <span>Ricky Parmar</span>{" "}
+            <span>is a developer</span>{" "}
+            <span>from India</span>{" "}
+            <span>building tools</span>{" "}
+            <span>for Linux.</span>
           </h1>
           <img className="readme-print" src="/readme-print.svg" width="390" height="260" alt="" />
         </div>
