@@ -53,77 +53,86 @@ a {
 
 .ruler {
   --progress: 0;
-  --stop-width: clamp(2.375rem, 8vw, 3.25rem);
+  --stop-width: clamp(2.5rem, 8.5vw, 3.375rem);
   position: relative;
   z-index: 1;
   align-self: end;
   justify-self: center;
   display: grid;
-  grid-template-columns: repeat(6, var(--stop-width));
-  margin-block-end: 0.625rem;
+  grid-template-rows: 1.35rem 2.75rem;
+  margin-block-end: 0.25rem;
   user-select: none;
   touch-action: pan-y;
 }
 
-.ruler::before {
-  position: absolute;
-  inset: auto 0 calc(50% - 5px);
-  block-size: 10px;
-  background:
-    linear-gradient(90deg, transparent calc(50% - 0.5px), var(--control) 0 calc(50% + 0.5px), transparent 0) 0 100% / var(--stop-width) 10px repeat-x,
-    repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), var(--rule) 0 25%) calc(var(--stop-width) / 8) 100% / var(--stop-width) 5px repeat-x;
-  content: "";
-  pointer-events: none;
+.map-readout {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: .25rem;
+  color: var(--ink);
+  font-size: .8125rem;
+  line-height: 1;
+  font-weight: 570;
 }
 
-.ruler::after {
+.map-readout span + span {
+  color: var(--muted);
+  font-size: .6875rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.map-viewfinder {
   position: absolute;
-  inset: auto auto calc(50% - 7px) calc(var(--progress) * (100% - var(--stop-width) + 0.375rem));
-  inline-size: calc(var(--stop-width) - 0.375rem);
-  block-size: 16px;
-  border: 1px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
-  content: "";
+  inset: auto auto .39rem calc(.12rem + var(--progress) * (100% - var(--stop-width)));
+  inline-size: calc(var(--stop-width) - .24rem);
+  block-size: 1.95rem;
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   pointer-events: none;
+  border-radius: 3px;
 }
 
 .ruler-stop {
-  display: block;
-  position: relative;
+  display: grid;
+  place-items: center;
   min-block-size: 2.75rem;
   cursor: grab;
   -webkit-user-drag: none;
-  -webkit-tap-highlight-color: transparent;
+  color: var(--muted);
 }
 
-.ruler-stop span {
-  position: absolute;
-  inset: auto auto calc(50% + 0.825rem) 50%;
-  transform: translateX(-50%);
-  font-size: 0.8125rem;
-  white-space: nowrap;
-  color: var(--muted);
-  opacity: 0;
+.map-landmark {
+  inline-size: 1.25rem;
+  block-size: .9rem;
+  border: 1px solid currentColor;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .12rem;
   pointer-events: none;
 }
 
-.ruler-stop:focus-visible {
-  outline-offset: -4px;
-}
+.map-landmark i { inline-size: .48rem; block-size: 1px; background: currentColor; }
+.ruler-stop[data-map-key="intro"] .map-landmark { flex-direction: column; align-items: flex-start; padding-inline-start: .18rem; }
+.ruler-stop[data-map-key="intro"] i:nth-child(2) { inline-size: .67rem; }
+.ruler-stop[data-map-key="pixie"] .map-landmark { background: #293526; color: #d0e7bb; }
+.ruler-stop[data-map-key="pixie"] i:nth-child(2) { inline-size: .3rem; block-size: .3rem; border-radius: 50%; }
+.ruler-stop[data-map-key="pixl"] .map-landmark { background: #dce0c8; }
+.ruler-stop[data-map-key="pixl"] i:nth-child(2) { inline-size: .25rem; block-size: .25rem; }
+.ruler-stop[data-map-key="ripple"] i { inline-size: .19rem; block-size: .19rem; border-radius: 50%; }
+.ruler-stop[data-map-key="ripple"] i:nth-child(2) { translate: 0 -.15rem; }
+.ruler-stop[data-map-key="experiments"] i { inline-size: .12rem; block-size: .4rem; }
+.ruler-stop[data-map-key="contact"] i { inline-size: .54rem; rotate: 28deg; }
+.ruler-stop[data-map-key="contact"] i:nth-child(2) { rotate: -28deg; margin-inline-start: -.24rem; }
+.ruler-stop[data-map-key="contact"] i:last-child { display: none; }
 
-.ruler:active .ruler-stop { cursor: grabbing; }
-
-.ruler-stop[aria-current] span,
-.ruler-stop:focus-visible span {
-  opacity: 1;
-}
-
-@media (hover: hover) {
-  .ruler:has(.ruler-stop:not([aria-current]):hover) .ruler-stop[aria-current]:not(:focus-visible) span { opacity: 0; }
-  .ruler-stop:hover span {
-    opacity: 1;
-  }
-}
+.ruler-stop:focus-visible { outline-offset: -3px; }
+.ruler-stop:is([aria-current], :hover, :focus-visible) { color: var(--accent); }
+.ruler[data-scrubbing] .ruler-stop { cursor: grabbing; }
 
 .strip {
   position: relative;
@@ -191,14 +200,8 @@ a {
   transition: transform 360ms cubic-bezier(.22,.72,.18,1);
 }
 
-.strip[data-moving] .chapter-content {
-  transform: translateY(-0.55rem) scale(.91);
-  transition-duration: 180ms;
-}
-
-.ruler { transition: transform 360ms cubic-bezier(.22,.72,.18,1); }
-#root:has(.strip[data-moving]) .ruler:not(:focus-within):not(:hover) {
-  transform: translateY(-0.5rem);
+#root:has(.ruler[data-scrubbing]) .chapter-content {
+  transform: translateY(-0.55rem) scale(.94);
   transition-duration: 180ms;
 }
 
@@ -227,8 +230,8 @@ a {
 #title-intro {
   font-size: clamp(1.85rem, min(4.95vw, 8.9dvh), 5.3rem);
   font-weight: 500;
-  line-height: 1.19;
-  letter-spacing: -0.027em;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
 }
 
 #title-intro span { display: block; }
@@ -290,7 +293,13 @@ a {
   min-inline-size: 0;
 }
 
-.project-copy h2 { font-size: clamp(2.75rem, 6.6vw, 6.7rem); }
+.project-copy h2 {
+  font-family: inherit;
+  font-size: clamp(2.6rem, 5.6vw, 5.6rem);
+  font-weight: 570;
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
 .project-copy .chapter-description { font-size: clamp(1rem, 1.6vw, 1.55rem); }
 
 .project-preview {
@@ -438,15 +447,14 @@ a {
   .readme-print { justify-self: start; max-inline-size: 17rem; inline-size: 90%; }
   .chapter-pixie, .chapter-pixl, .chapter-ripple { flex-basis: 90vw; }
   .project-spread { grid-template-columns: 1fr; }
-  .strip[data-moving] .chapter-content { transform: translateY(-.25rem) scale(.95); }
+  #root:has(.ruler[data-scrubbing]) .chapter-content { transform: translateY(-.25rem) scale(.95); }
 
 }
 
 @media (prefers-reduced-motion: reduce) {
   .strip { scroll-behavior: auto; }
   .chapter-content, .ruler, .project-preview img, .project-preview > span { transition: none; }
-  .strip[data-moving] .chapter-content,
-  #root:has(.strip[data-moving]) .ruler:not(:focus-within):not(:hover),
+  #root:has(.ruler[data-scrubbing]) .chapter-content,
   .project-preview:hover img { transform: none; }
   .strip[data-reveal] :is(.intro-frame, .project-spread) { animation: none; }
   .copy, .copy span { transition: none; }

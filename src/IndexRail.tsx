@@ -22,11 +22,12 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   const ruler = useRef<HTMLElement>(null);
   const scrub = useRef<Scrub | null>(null);
   const suppressClick = useRef(false);
-  const motionTimer = useRef<number>(undefined);
-  const muteMotionUntil = useRef(0);
   const introEvaluated = useRef(false);
   const [reveal, setReveal] = useState(false);
   const [active, setActive] = useState(0);
+  const [preview, setPreview] = useState<number | null>(null);
+  const [scrubbing, setScrubbing] = useState(false);
+  const selected = scrubbing ? active : preview ?? active;
 
   function trackPosition() {
     const track = rail.current;
@@ -50,22 +51,10 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     setReveal(true);
   }, []);
 
-  function onTravel() {
-    trackPosition();
-    if (performance.now() < muteMotionUntil.current || scrub.current?.started) return;
-    const track = rail.current;
-    if (!track) return;
-    setReveal(false);
-    track.dataset.moving = "true";
-    window.clearTimeout(motionTimer.current);
-    motionTimer.current = window.setTimeout(() => { delete track.dataset.moving; }, 165);
-  }
-
   useEffect(() => {
     const track = rail.current;
     if (!track) return;
     function followHash() {
-      muteMotionUntil.current = performance.now() + 100;
       const hash = window.location.hash.slice(1);
       const aliases: Record<string, string> = { work: "pixie", about: "contact", top: "intro" };
       const index = chapters.findIndex(({ id }) => id === (aliases[hash] ?? hash));
@@ -76,6 +65,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
 
     function moveOnWheel(event: WheelEvent) {
       if (!track || event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      setPreview(null);
       setReveal(false);
       if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
 
@@ -88,7 +78,6 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       if (event.cancelable) event.preventDefault();
       const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
         : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? track.clientWidth : 1;
-      muteMotionUntil.current = 0;
       track.scrollLeft += event.deltaY * unit;
     }
 
@@ -100,7 +89,6 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     return () => {
       observer.disconnect();
       track.removeEventListener("wheel", moveOnWheel);
-      window.clearTimeout(motionTimer.current);
       window.removeEventListener("hashchange", followHash);
     };
   }, [chapters]);
@@ -111,9 +99,6 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     const hash = "#" + chapters[index].id;
     if (window.location.hash !== hash) window.history.pushState(null, "", hash);
     setReveal(false);
-    muteMotionUntil.current = performance.now() + 100;
-    window.clearTimeout(motionTimer.current);
-    delete track.dataset.moving;
     track.scrollLeft = stopsFor(track)[index];
     trackPosition();
   }
@@ -137,9 +122,8 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       if (Math.abs(event.clientX - gesture.originX) < 5) return;
       gesture.started = true;
       suppressClick.current = true;
+      setScrubbing(true);
       event.currentTarget.setPointerCapture(event.pointerId);
-      window.clearTimeout(motionTimer.current);
-      track.dataset.moving = "true";
     }
     const bounds = event.currentTarget.getBoundingClientRect();
     const stops = stopsFor(track);
@@ -152,9 +136,12 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
 
   function endScrub(event: PointerEvent<HTMLElement>) {
     if (scrub.current?.pointerId !== event.pointerId) return;
-    if (rail.current) delete rail.current.dataset.moving;
-    muteMotionUntil.current = performance.now() + 50;
+    const gestureMoved = scrub.current.started;
     scrub.current = null;
+    if (gestureMoved) {
+      setScrubbing(false);
+      setPreview(null);
+    }
   }
 
   function navigate(event: KeyboardEvent, index: number, moveFocus: boolean) {
@@ -174,6 +161,12 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   return (
     <>
       <nav className="ruler" ref={ruler} aria-label="Portfolio chapters"
+        data-scrubbing={scrubbing || undefined}
+        style={{ gridTemplateColumns: `repeat(${chapters.length}, var(--stop-width))` }}
+        onPointerLeave={() => setPreview(null)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setPreview(null);
+        }}
         onPointerDown={beginScrub} onPointerMove={moveScrub}
         onPointerUp={endScrub} onPointerCancel={endScrub} onLostPointerCapture={endScrub}
         onClickCapture={(event) => {
@@ -182,20 +175,29 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
           event.preventDefault();
           event.stopPropagation();
         }}>
+        <div className="map-readout" aria-hidden="true">
+          <span>{chapters[selected].label}</span>
+          <span>{String(selected + 1).padStart(2, "0")} / {String(chapters.length).padStart(2, "0")}</span>
+        </div>
+        <div className="map-viewfinder" aria-hidden="true" />
         {chapters.map(({ id, label }, index) => (
           <a key={id} className="ruler-stop" href={`#${id}`} draggable={false}
+            aria-label={label}
             aria-current={active === index ? "location" : undefined}
+            data-map-key={id}
+            onPointerEnter={(event) => { if (event.pointerType === "mouse") setPreview(index); }}
+            onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) setPreview(index); }}
             onClick={(event) => {
               if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault();
               goTo(index);
             }}
             onKeyDown={(event) => navigate(event, index, true)}>
-            <span>{label}</span>
+            <span className="map-landmark" aria-hidden="true"><i /><i /><i /></span>
           </a>
         ))}
       </nav>
-      <main className="strip" ref={rail} onScroll={onTravel} tabIndex={0}
+      <main className="strip" ref={rail} onScroll={trackPosition} tabIndex={0}
         aria-label="Horizontal portfolio"
         data-reveal={reveal || undefined}
         onFocusCapture={() => setReveal(false)}
