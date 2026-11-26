@@ -3,6 +3,15 @@ import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, typ
 type Chapter = { id: string; label: string; content: ReactNode };
 type Scrub = { pointerId: number; originX: number; started: boolean };
 
+const contactFrames: Record<string, string> = {
+  intro: "/readme-print.svg",
+  pixie: "/previews/pixie.webp",
+  pixl: "/previews/pixl.webp",
+  ripple: "/previews/ripple.webp",
+};
+
+const indexMarks: Record<string, string> = { x: "X", experiments: "01", contact: "↗" };
+
 function stopsFor(track: HTMLDivElement) {
   const limit = track.scrollWidth - track.clientWidth;
   return Array.from(track.children, panel => Math.min((panel as HTMLElement).offsetLeft, limit));
@@ -192,7 +201,11 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
               goTo(index);
             }}
             onKeyDown={(event) => navigate(event, index, true)}>
-            <span className="map-landmark" aria-hidden="true"><i /><i /><i /></span>
+            <span className="map-landmark" aria-hidden="true">
+              {contactFrames[id]
+                ? <img src={contactFrames[id]} alt="" width="40" height="26" decoding="async" draggable={false} />
+                : <span>{indexMarks[id]}</span>}
+            </span>
           </a>
         ))}
       </nav>
