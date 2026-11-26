@@ -1,220 +1,137 @@
-import { Ascii } from "ascii.rest/react";
-import * as earthrise from "ascii.rest/pieces/earthrise";
-import { projects } from "./data";
-import Labs from "./Labs";
-import GitHubHeatmap from "./GitHubHeatmap";
-import PixlPreview from "./PixlPreview";
-import { useHorizontalScroll } from "./useHorizontalScroll";
+import { useEffect, useRef, useState } from "react";
 
-const PANEL_COUNT = 5;
-// Panel indexes, in track order.
-const HOME = 0;
-const ABOUT = 1;
-const PROJECTS = 2;
-const LABS = 3;
-const CONTACT = 4;
+const email = "me@querencia.art";
 
-const PROMPT_PATHS = ["~", "~/about", "~/projects", "~/labs", "~/contact"] as const;
+type CopyStatus = "idle" | "copied" | "failed";
 
-const PROJECT_SCREENSHOTS: Record<string, string> = {
-  pixie: "Pixie website with a pixel-art night scene and setup page",
-  x: "X website showing the dictation app and desktop interface",
-  ripple: "Ripple website with pixel characters and its what-if tagline",
-};
+function Contact() {
+  const address = useRef<HTMLAnchorElement>(null);
+  const resetTimer = useRef<number>(undefined);
+  const copying = useRef(false);
+  const [status, setStatus] = useState<CopyStatus>("idle");
 
+  useEffect(() => () => window.clearTimeout(resetTimer.current), []);
 
-const PROJECT_TAGS: Record<string, readonly string[]> = {
-  pixl: ["YSWS"],
-  aether: ["Hyprland", "Quickshell"],
-  x: ["Linux", "dictation"],
-  pixie: ["Slack", "bot"],
-  ripple: ["simulation"],
-};
+  async function copyEmail() {
+    if (copying.current) return;
+    copying.current = true;
+    window.clearTimeout(resetTimer.current);
+    setStatus("idle");
 
-// Drawn icons, one stroke weight, in currentColor.
-const GithubIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
-  </svg>
-);
-
-const MailIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect x="2" y="4" width="20" height="16" rx="2" />
-    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-  </svg>
-);
-
-const InstagramIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <path d="M17.5 6.5h.01" />
-  </svg>
-);
-
-export default function App() {
-  const { outerRef, trackRef, goTo, active } = useHorizontalScroll(PANEL_COUNT);
-  const navLink = (label: string, index: number) => {
-    const isActive = index === active;
-    return (
-    <li>
-      <a
-        href={`#${label}`}
-        className={isActive ? "active" : undefined}
-        aria-current={isActive ? "page" : undefined}
-        onClick={(e) => {
-          e.preventDefault();
-          goTo(index);
-        }}
-      >
-        {label}
-      </a>
-    </li>
-    );
-  };
+    try {
+      await navigator.clipboard.writeText(email);
+      setStatus("copied");
+      resetTimer.current = window.setTimeout(() => setStatus("idle"), 2800);
+    } catch {
+      const selection = window.getSelection();
+      if (selection && address.current) {
+        const range = document.createRange();
+        range.selectNodeContents(address.current);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      setStatus("failed");
+    } finally {
+      copying.current = false;
+    }
+  }
 
   return (
-    <main>
-      {/* Fixed backdrop: the earthrise piece from ascii.rest (MIT) stays put while the panels slide. */}
-      <div className="backdrop" aria-hidden="true">
-        <Ascii piece={earthrise} label="" />
+    <section className="contact" id="contact" aria-labelledby="contact-heading" tabIndex={-1}>
+      <h2 className="section-title" id="contact-heading">Contact</h2>
+      <div className="contact-actions">
+        <a className="email" href={`mailto:${email}`} ref={address}>{email}</a>
+        <button
+          className="copy"
+          type="button"
+          onClick={copyEmail}
+          data-status={status}
+          aria-label={status === "copied" ? "Copied. Copy email again" : "Copy email"}
+        >
+          <span aria-hidden="true">Copy email</span>
+          <span aria-hidden="true">Copied</span>
+        </button>
       </div>
-      <div className="veil" aria-hidden="true" />
-      <div className="edge-fade" aria-hidden="true" />
+      <p className="copy-status" role="status">
+        {status === "copied" && <span className="sr-only">Email address copied.</span>}
+        {status === "failed" && "Clipboard unavailable. You can copy the address manually."}
+      </p>
+      <a className="github" href="https://github.com/0xQuerencia">GitHub</a>
+    </section>
+  );
+}
 
-      <nav className="nav" aria-label="Main">
-        <span className="prompt">
-          0xque@home:<span className="prompt-path" key={active}>{PROMPT_PATHS[active] ?? "~"}</span>
-        </span>
-        <ul className="nav-links">
-          {navLink("home", HOME)}
-          {navLink("about", ABOUT)}
-          {navLink("projects", PROJECTS)}
-          {navLink("labs", LABS)}
-          {navLink("contact", CONTACT)}
-        </ul>
-      </nav>
+export default function App() {
+  return (
+    <div className="page" id="top">
+      <a className="skip-link" href="#main">Skip to content</a>
+      <header className="site-header">
+        <a className="wordmark" href="#top">querencia.art</a>
+        <nav aria-label="Main">
+          <ul>
+            <li><a href="#work">work</a></li>
+            <li><a href="#experiments">experiments</a></li>
+            <li><a href="#about">about</a></li>
+            <li><a href="#contact">contact</a></li>
+          </ul>
+        </nav>
+      </header>
 
-      <div className="h-outer" ref={outerRef}>
-        <div className="h-sticky">
-          <div className="h-track" ref={trackRef}>
-            <section className="panel hero" aria-label="Home">
-              <h1 className="hello">
-                hello, world.
-                <br />
-                i'm <span className="accent">0xque</span>
-              </h1>
-              <p className="tagline">i'd rather build it than pay for it.</p>
-              <div className="btns">
-                <button type="button" className="btn btn--primary" onClick={() => goTo(PROJECTS)}>
-                  view projects <span className="btn-arrow" aria-hidden="true">→</span>
-                </button>
-                <button type="button" className="btn" onClick={() => goTo(ABOUT)}>
-                  about me
-                </button>
-              </div>
-            </section>
+      <main id="main" tabIndex={-1}>
+        <section className="intro" aria-labelledby="intro-heading">
+          <h1 id="intro-heading">
+            <span>hey, i’m ricky.</span>
+            <span>i build things i wish existed.</span>
+          </h1>
+          <p>I'd rather build it than pay for it.</p>
+        </section>
 
-            <section className="panel" aria-labelledby="about-title">
-              <div className="about">
-                <h2 id="about-title" className="label">about me</h2>
-                <p>
-                  Hey there, I'm Ricky, also known online as <span className="hl">0xQuerencia</span>.
-                </p>
-                <p>
-                  I enjoy messing around with linux, building dev tools, ricing, and automation cuz I am lazy asf.
-                </p>
-                <p>
-                  And I mostly build whatever idea comes up in my mind at 3 am on a random tuesday.
-                </p>
-                <GitHubHeatmap />
-              </div>
-            </section>
+        <section className="work-index" id="work" aria-labelledby="work-heading" tabIndex={-1}>
+          <h2 className="section-title" id="work-heading">Selected Work</h2>
+          <article className="work" id="pixie" tabIndex={-1}>
+            <h3>Pixie</h3>
+            <div>
+              <p>I built a Slack support bot for Hack Club programs.</p>
+              <ul className="project-links" aria-label="Pixie links">
+                <li><a href="https://pixie.support">Open Pixie</a></li>
+                <li><a href="https://github.com/0xQuerencia/pixie">View source</a></li>
+              </ul>
+            </div>
+          </article>
+          <article className="work" id="pixl" tabIndex={-1}>
+            <h3>Pixl</h3>
+            <div>
+              <p>I contributed to Hack Club’s pixel-themed You Ship, We Ship program, including fixes for how projects earn pixel credits.</p>
+              <ul className="project-links" aria-label="Pixl links">
+                <li><a href="https://pixl.hackclub.com">Open Pixl</a></li>
+                <li><a href="https://github.com/hackclub/pixl">View source</a></li>
+              </ul>
+            </div>
+          </article>
+          <article className="work" id="ripple" tabIndex={-1}>
+            <h3>Ripple</h3>
+            <div>
+              <p>I made a tool for exploring what-if questions by tracing chains of cause and effect.</p>
+              <ul className="project-links" aria-label="Ripple links">
+                <li><a href="https://ripple.querencia.art">Open Ripple</a></li>
+                <li><a href="https://github.com/0xQuerencia/ripple">View source</a></li>
+              </ul>
+            </div>
+          </article>
+        </section>
 
-            <section className="panel" aria-labelledby="projects-title">
-              <div className="projects">
-                <h2 id="projects-title" className="label">projects</h2>
-                <ul className="project-bento">
-                  {projects.map((project) => (
-                    <li className={`project-card project-card--${project.name}`} key={project.name}>
-                      <div className="project-card-content">
-                        <h3>{project.name}</h3>
-                        <p>{project.description}</p>
-                        {PROJECT_TAGS[project.name] && (
-                          <div className="project-tags">
-                            {PROJECT_TAGS[project.name].map((tag) => (
-                              <span key={tag}>{tag}</span>
-                            ))}
-                          </div>
-                        )}
-                        <div className="project-actions">
-                          {project.url && (
-                            <a className="btn project-open-site" href={project.url} target="_blank" rel="noopener noreferrer">
-                              Open site <span className="btn-arrow" aria-hidden="true">↗</span>
-                            </a>
-                          )}
-                          <a className="btn project-view-code" href={project.repo} target="_blank" rel="noopener noreferrer">
-                            View code <span className="btn-arrow" aria-hidden="true">↗</span>
-                          </a>
-                        </div>
-                      </div>
-                      {project.name === "pixl" && <PixlPreview />}
-                      {PROJECT_SCREENSHOTS[project.name] && (
-                        <div className={`project-screenshot project-screenshot--${project.name}`}>
-                          <img
-                            src={project.name === "ripple" ? "/previews/ripple-v2.webp" : `/previews/${project.name}.webp`}
-                            alt={PROJECT_SCREENSHOTS[project.name]}
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
+        <section className="experiments" id="experiments" aria-labelledby="experiments-heading" tabIndex={-1}>
+          <h2 className="section-title" id="experiments-heading">Experiments</h2>
+          <p>I wanted a copy button that gives feedback without moving the page. <a href="#contact">Try it below</a>.</p>
+        </section>
 
-            <section className="panel panel--labs" id="labs" aria-labelledby="labs-title">
-              <Labs />
-            </section>
+        <section className="about" id="about" aria-labelledby="about-heading" tabIndex={-1}>
+          <h2 className="section-title" id="about-heading">About</h2>
+          <p>I’m Ricky Parmar, a student developer from India. I like tinkering with Linux, desktop workflows, and small tools for problems I run into.</p>
+        </section>
 
-            <section className="panel contact" id="contact" aria-labelledby="contact-title">
-              <div className="contact-inner">
-                <h2 id="contact-title" className="contact-title">contact</h2>
-                <ul className="contact-links">
-                  <li>
-                    <a href="mailto:me@querencia.art">
-                      <MailIcon />
-                      me@querencia.art
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/0xQuerencia" target="_blank" rel="noopener noreferrer">
-                      <GithubIcon />
-                      github
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://instagram.com/0xque" target="_blank" rel="noopener noreferrer">
-                      <InstagramIcon />
-                      instagram
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <footer className="foot">
-                <p className="credit">
-                  Background: earthrise by <a href="https://github.com/bas3line/ascii" target="_blank" rel="noopener noreferrer">ascii.rest</a>,
-                  MIT licensed.
-                </p>
-              </footer>
-            </section>
-          </div>
-        </div>
-      </div>
-    </main>
+        <Contact />
+      </main>
+    </div>
   );
 }
