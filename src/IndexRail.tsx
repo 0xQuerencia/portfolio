@@ -193,7 +193,8 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
               goTo(index);
             }}
             onKeyDown={(event) => navigate(event, index, true)}>
-            <span className="map-landmark" aria-hidden="true"><i /><i /><i /></span>
+            <span className="map-landmark" aria-hidden="true" />
+            <span className="map-caption" aria-hidden="true">{id === "experiments" ? "Lab" : id === "contact" ? "Contact" : label}</span>
           </a>
         ))}
       </nav>

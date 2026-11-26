@@ -117,6 +117,24 @@ const chapters = [
     </>,
   },
   {
+    id: "x",
+    label: "X",
+    content: (
+      <div className="project-spread">
+        <div className="project-copy">
+          <h2 id="title-x">X</h2>
+          <p className="chapter-description">Local dictation and voice actions for Linux, built on Hex.</p>
+          <div className="links"><a href="https://github.com/0xQuerencia/x">View X on GitHub</a></div>
+        </div>
+        <figure className="x-specimen">
+          <figcaption>Example voice action</figcaption>
+          <p>“X, open Firefox.”</p>
+          <span>↳ Opens the app</span>
+        </figure>
+      </div>
+    ),
+  },
+  {
     id: "pixl",
     label: "Pixl",
     content: <>
