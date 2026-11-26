@@ -87,8 +87,6 @@ a {
 }
 
 .map-viewfinder {
-  --corner: 5px;
-  --corner-ink: var(--accent);
   position: absolute;
   inset: auto auto var(--seat) calc(var(--stop-width) / 2 + var(--progress) * (100% - var(--stop-width)));
   inline-size: calc(var(--stop-width) - 2px);
@@ -96,16 +94,8 @@ a {
   transform: translate(-50%, 50%);
   z-index: 2;
   pointer-events: none;
-  background:
-    linear-gradient(var(--corner-ink) 0 0) left top / var(--corner) 1px,
-    linear-gradient(var(--corner-ink) 0 0) left top / 1px var(--corner),
-    linear-gradient(var(--corner-ink) 0 0) right top / var(--corner) 1px,
-    linear-gradient(var(--corner-ink) 0 0) right top / 1px var(--corner),
-    linear-gradient(var(--corner-ink) 0 0) left bottom / var(--corner) 1px,
-    linear-gradient(var(--corner-ink) 0 0) left bottom / 1px var(--corner),
-    linear-gradient(var(--corner-ink) 0 0) right bottom / var(--corner) 1px,
-    linear-gradient(var(--corner-ink) 0 0) right bottom / 1px var(--corner);
-  background-repeat: no-repeat;
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
 }
 
 .ruler-stop {
@@ -252,7 +242,11 @@ a {
 
 #title-intro span { display: block; }
 #title-intro span:nth-child(even) { padding-inline-start: 0.76em; }
-.readme-print { display: block; inline-size: 100%; max-inline-size: 29rem; block-size: auto; justify-self: end; }
+.chapter {
+  --art-drift: clamp(-1, calc(var(--chapter-position, 0) - var(--chapter-index, 0)), 1);
+}
+
+.readme-print { display: block; inline-size: 100%; max-inline-size: 29rem; block-size: auto; justify-self: end; translate: calc(var(--art-drift) * clamp(3px, 1vw, 16px)) 0; }
 
 .intro-links {
   border-block-start: 1px solid var(--rule);
@@ -355,7 +349,9 @@ a {
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
-  transition: transform 320ms cubic-bezier(.22,.72,.18,1);
+  translate: calc(var(--art-drift) * clamp(3px, .74vw, 11px)) 0;
+  scale: 1.09;
+  transition: scale 320ms cubic-bezier(.22,.72,.18,1);
 }
 
 .project-preview > span {
@@ -373,7 +369,7 @@ a {
 .project-preview:is(:hover, :focus-visible) > span { background: var(--accent); color: white; }
 
 @media (hover: hover) {
-  .project-preview:hover img { transform: scale(1.025); }
+  .project-preview:hover img { scale: 1.125; }
 }
 
 .chapter-experiments h2,
@@ -492,6 +488,8 @@ a {
   .chapter-content, .ruler, .project-preview img, .project-preview > span { transition: none; }
   #root:has(.ruler[data-scrubbing]) .chapter-content,
   .project-preview:hover img { transform: none; }
+  .readme-print, .project-preview img { translate: none; }
+  .project-preview img, .project-preview:hover img { scale: none; }
   .strip[data-reveal] :is(.intro-frame, .project-spread) { animation: none; }
   .copy, .copy span { transition: none; }
   .copy:active { transform: none; }

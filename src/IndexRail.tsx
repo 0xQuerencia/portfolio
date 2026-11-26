@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 type Chapter = { id: string; label: string; content: ReactNode };
 type Scrub = { pointerId: number; originX: number; started: boolean };
@@ -43,6 +43,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     if (!track) return;
     const position = rulerPosition(stopsFor(track), track.scrollLeft);
     setActive(Math.round(position));
+    track.style.setProperty("--chapter-position", String(position));
     const offset = position / Math.max(1, chapters.length - 1);
     ruler.current?.style.setProperty("--progress", String(offset));
   }
@@ -233,8 +234,9 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
         onKeyDown={(event) => {
           if (event.target === event.currentTarget) navigate(event, active, false);
         }}>
-        {chapters.map(({ id, content }) => (
-          <section key={id} className={`chapter chapter-${id}`} id={id} aria-labelledby={`title-${id}`}>
+        {chapters.map(({ id, content }, index) => (
+          <section key={id} className={`chapter chapter-${id}`} id={id} aria-labelledby={`title-${id}`}
+            style={{ "--chapter-index": index } as CSSProperties}>
             <div className="chapter-content">{content}</div>
           </section>
         ))}
