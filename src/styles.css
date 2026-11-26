@@ -188,10 +188,33 @@ a {
 
 .chapter-content {
   transform-origin: center;
-  transition: scale 220ms cubic-bezier(.2,.65,.3,1);
+  transition: transform 360ms cubic-bezier(.22,.72,.18,1);
 }
 
-.strip[data-moving] .chapter-content { scale: 0.988; transition-duration: 100ms; }
+.strip[data-moving] .chapter-content {
+  transform: translateY(-0.55rem) scale(.91);
+  transition-duration: 180ms;
+}
+
+.ruler { transition: transform 360ms cubic-bezier(.22,.72,.18,1); }
+#root:has(.strip[data-moving]) .ruler:not(:focus-within):not(:hover) {
+  transform: translateY(-0.5rem);
+  transition-duration: 180ms;
+}
+
+@keyframes index-unfold {
+  from { opacity: .35; transform: translateY(1.25rem) scale(.94); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes preview-peek {
+  from { opacity: 0; transform: translate(1.15rem, .6rem) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.strip[data-reveal] .intro-frame { animation: index-unfold 560ms cubic-bezier(.16,1,.3,1) both; }
+.strip[data-reveal] .chapter-pixie .project-spread { animation: preview-peek 440ms 95ms cubic-bezier(.16,1,.3,1) both; }
+
 
 .intro-composition {
   display: grid;
@@ -245,27 +268,67 @@ a {
 }
 
 .chapter:not(.chapter-intro) { border-inline-start: 1px solid var(--rule); }
-.chapter-pixie { flex-basis: min(74vw, 68rem); }
+.chapter-pixie { flex-basis: min(78vw, 75rem); }
+.chapter-pixl { flex-basis: min(74vw, 72rem); }
+.chapter-ripple { flex-basis: min(82vw, 77rem); }
 
-.chapter-pixie .chapter-content {
-  align-content: start;
-  padding-block-start: max(2rem, 17vh);
+:is(.chapter-pixie, .chapter-pixl, .chapter-ripple) .chapter-content {
+  padding-inline: clamp(1.15rem, 4vw, 5rem);
 }
 
-.chapter-pixl .chapter-content {
-  align-content: end;
-  padding-block-end: max(2rem, 17vh);
+.project-spread {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.6fr);
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 3.5rem);
+  inline-size: 100%;
 }
 
-.project-detail {
-  padding-block-start: 1rem;
-  border-block-start: 1px solid var(--rule);
+.project-copy {
+  display: grid;
+  gap: clamp(.7rem, 1.7vw, 1.5rem);
+  min-inline-size: 0;
 }
 
-.chapter-ripple { flex-basis: min(75vw, 65rem); }
+.project-copy h2 { font-size: clamp(2.75rem, 6.6vw, 6.7rem); }
+.project-copy .chapter-description { font-size: clamp(1rem, 1.6vw, 1.55rem); }
 
-.chapter-ripple .chapter-content {
-  padding-inline-start: clamp(var(--inset), 16vw, 16rem);
+.project-preview {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  outline-offset: 5px;
+  background: #e3dfd8;
+}
+
+.chapter-pixie .project-preview { background: #11180d; }
+.chapter-pixl .project-preview { background: #252325; }
+
+.project-preview img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  transition: transform 320ms cubic-bezier(.22,.72,.18,1);
+}
+
+.project-preview > span {
+  position: absolute;
+  inset: auto .625rem .625rem auto;
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  background: var(--paper);
+  color: var(--ink);
+  transition: background-color 130ms ease-out, color 130ms ease-out;
+}
+
+.project-preview:is(:hover, :focus-visible) > span { background: var(--accent); color: white; }
+
+@media (hover: hover) {
+  .project-preview:hover img { transform: scale(1.025); }
 }
 
 .chapter-experiments h2,
@@ -373,25 +436,19 @@ a {
   .intro-frame { padding: clamp(1rem, 5vw, 2rem); padding-block-end: 0.5rem; }
   #title-intro { font-size: clamp(1.35rem, min(8.3vw, 5dvh), 2.6rem); }
   .readme-print { justify-self: start; max-inline-size: 17rem; inline-size: 90%; }
-  .chapter-pixie, .chapter-ripple { flex-basis: 90vw; }
+  .chapter-pixie, .chapter-pixl, .chapter-ripple { flex-basis: 90vw; }
+  .project-spread { grid-template-columns: 1fr; }
+  .strip[data-moving] .chapter-content { transform: translateY(-.25rem) scale(.95); }
 
-  .chapter-pixie .chapter-content {
-    padding-block-start: max(2rem, 15vh);
-  }
-
-  .chapter-pixl .chapter-content {
-    padding-block-end: max(2rem, 15vh);
-  }
-
-  .chapter-ripple .chapter-content {
-    padding-inline-start: var(--inset);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .strip { scroll-behavior: auto; }
-  .chapter-content { transition: none; }
-  .strip[data-moving] .chapter-content { scale: none; }
+  .chapter-content, .ruler, .project-preview img, .project-preview > span { transition: none; }
+  .strip[data-moving] .chapter-content,
+  #root:has(.strip[data-moving]) .ruler:not(:focus-within):not(:hover),
+  .project-preview:hover img { transform: none; }
+  .strip[data-reveal] :is(.intro-frame, .project-spread) { animation: none; }
   .copy, .copy span { transition: none; }
   .copy:active { transform: none; }
 }

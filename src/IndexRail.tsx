@@ -22,7 +22,10 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   const ruler = useRef<HTMLElement>(null);
   const scrub = useRef<Scrub | null>(null);
   const suppressClick = useRef(false);
-  const wheelTimer = useRef<number>(undefined);
+  const motionTimer = useRef<number>(undefined);
+  const muteMotionUntil = useRef(0);
+  const introEvaluated = useRef(false);
+  const [reveal, setReveal] = useState(false);
   const [active, setActive] = useState(0);
 
   function trackPosition() {
@@ -35,9 +38,34 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   }
 
   useEffect(() => {
+    if (introEvaluated.current) return;
+    introEvaluated.current = true;
+    if (window.location.hash || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    try {
+      if (sessionStorage.getItem("querencia:opening")) return;
+      sessionStorage.setItem("querencia:opening", "seen");
+    } catch {
+      // An unavailable session store should not block the experience.
+    }
+    setReveal(true);
+  }, []);
+
+  function onTravel() {
+    trackPosition();
+    if (performance.now() < muteMotionUntil.current || scrub.current?.started) return;
+    const track = rail.current;
+    if (!track) return;
+    setReveal(false);
+    track.dataset.moving = "true";
+    window.clearTimeout(motionTimer.current);
+    motionTimer.current = window.setTimeout(() => { delete track.dataset.moving; }, 165);
+  }
+
+  useEffect(() => {
     const track = rail.current;
     if (!track) return;
     function followHash() {
+      muteMotionUntil.current = performance.now() + 100;
       const hash = window.location.hash.slice(1);
       const aliases: Record<string, string> = { work: "pixie", about: "contact", top: "intro" };
       const index = chapters.findIndex(({ id }) => id === (aliases[hash] ?? hash));
@@ -48,6 +76,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
 
     function moveOnWheel(event: WheelEvent) {
       if (!track || event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      setReveal(false);
       if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
 
       // A short viewport or long chapter can scroll vertically before advancing the strip.
@@ -59,12 +88,8 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       if (event.cancelable) event.preventDefault();
       const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
         : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? track.clientWidth : 1;
-      const before = track.scrollLeft;
+      muteMotionUntil.current = 0;
       track.scrollLeft += event.deltaY * unit;
-      if (before === track.scrollLeft) return;
-      track.dataset.moving = "true";
-      window.clearTimeout(wheelTimer.current);
-      wheelTimer.current = window.setTimeout(() => { delete track.dataset.moving; }, 115);
     }
 
     followHash();
@@ -75,7 +100,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     return () => {
       observer.disconnect();
       track.removeEventListener("wheel", moveOnWheel);
-      window.clearTimeout(wheelTimer.current);
+      window.clearTimeout(motionTimer.current);
       window.removeEventListener("hashchange", followHash);
     };
   }, [chapters]);
@@ -85,6 +110,9 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
     if (!track || !chapters[index]) return;
     const hash = "#" + chapters[index].id;
     if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+    setReveal(false);
+    muteMotionUntil.current = performance.now() + 100;
+    window.clearTimeout(motionTimer.current);
     delete track.dataset.moving;
     track.scrollLeft = stopsFor(track)[index];
     trackPosition();
@@ -92,6 +120,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
 
   function beginScrub(event: PointerEvent<HTMLElement>) {
     if (!event.isPrimary || event.button !== 0) return;
+    setReveal(false);
     suppressClick.current = false;
     scrub.current = { pointerId: event.pointerId, originX: event.clientX, started: false };
   }
@@ -109,6 +138,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
       gesture.started = true;
       suppressClick.current = true;
       event.currentTarget.setPointerCapture(event.pointerId);
+      window.clearTimeout(motionTimer.current);
       track.dataset.moving = "true";
     }
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -123,6 +153,7 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
   function endScrub(event: PointerEvent<HTMLElement>) {
     if (scrub.current?.pointerId !== event.pointerId) return;
     if (rail.current) delete rail.current.dataset.moving;
+    muteMotionUntil.current = performance.now() + 50;
     scrub.current = null;
   }
 
@@ -164,8 +195,14 @@ export default function IndexRail({ chapters }: { chapters: Chapter[] }) {
           </a>
         ))}
       </nav>
-      <main className="strip" ref={rail} onScroll={trackPosition} tabIndex={0}
+      <main className="strip" ref={rail} onScroll={onTravel} tabIndex={0}
         aria-label="Horizontal portfolio"
+        data-reveal={reveal || undefined}
+        onFocusCapture={() => setReveal(false)}
+        onPointerDown={() => setReveal(false)}
+        onAnimationEnd={(event) => {
+          if (event.animationName === "index-unfold") setReveal(false);
+        }}
         onClick={(event) => {
           if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');

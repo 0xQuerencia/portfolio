@@ -60,6 +60,21 @@ function CopyEmail() {
   );
 }
 
+function ProjectPreview({ name, image, href, eager = false }: {
+  name: string;
+  image: string;
+  href: string;
+  eager?: boolean;
+}) {
+  return (
+    <a className="project-preview" href={href} aria-label={`Open ${name}`}>
+      <img src={image} alt="" loading={eager ? "eager" : "lazy"} decoding="async"
+        width={1200} height={675} />
+      <span aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
 const chapters = [
   {
     id: "intro",
@@ -88,11 +103,16 @@ const chapters = [
     id: "pixie",
     label: "Pixie",
     content: <>
-      <h2 id="title-pixie">Pixie</h2>
-      <p className="chapter-description">I built a Slack support bot for Hack Club programs.</p>
-      <div className="links">
-        <a href="https://pixie.support">Open Pixie</a>
-        <a href="https://github.com/0xQuerencia/pixie">View source</a>
+      <div className="project-spread">
+        <div className="project-copy">
+          <h2 id="title-pixie">Pixie</h2>
+          <p className="chapter-description">I built a Slack support bot for Hack Club programs.</p>
+          <div className="links">
+            <a href="https://pixie.support">Open Pixie</a>
+            <a href="https://github.com/0xQuerencia/pixie">View source</a>
+          </div>
+        </div>
+        <ProjectPreview name="Pixie" image="/previews/pixie.webp" href="https://pixie.support" eager />
       </div>
     </>,
   },
@@ -100,13 +120,18 @@ const chapters = [
     id: "pixl",
     label: "Pixl",
     content: <>
-      <h2 id="title-pixl">Pixl</h2>
-      <div className="project-detail">
-        <p className="chapter-description">I contributed to Hack Club’s pixel-themed You Ship, We Ship program, including fixes for how projects earn pixel credits.</p>
-        <div className="links">
-          <a href="https://pixl.hackclub.com">Open Pixl</a>
-          <a href="https://github.com/hackclub/pixl">View source</a>
+      <div className="project-spread">
+        <div className="project-copy">
+          <h2 id="title-pixl">Pixl</h2>
+          <div className="project-detail">
+            <p className="chapter-description">I contributed to Hack Club’s pixel-themed You Ship, We Ship program, including fixes for how projects earn pixel credits.</p>
+            <div className="links">
+              <a href="https://pixl.hackclub.com">Open Pixl</a>
+              <a href="https://github.com/hackclub/pixl">View source</a>
+            </div>
+          </div>
         </div>
+        <ProjectPreview name="Pixl" image="/previews/pixl.webp" href="https://pixl.hackclub.com" />
       </div>
     </>,
   },
@@ -114,11 +139,16 @@ const chapters = [
     id: "ripple",
     label: "Ripple",
     content: <>
-      <h2 id="title-ripple">Ripple</h2>
-      <p className="chapter-description">I made a tool for exploring what-if questions by tracing chains of cause and effect.</p>
-      <div className="links">
-        <a href="https://ripple.querencia.art">Open Ripple</a>
-        <a href="https://github.com/0xQuerencia/ripple">View source</a>
+      <div className="project-spread">
+        <div className="project-copy">
+          <h2 id="title-ripple">Ripple</h2>
+          <p className="chapter-description">I made a tool for exploring what-if questions by tracing chains of cause and effect.</p>
+          <div className="links">
+            <a href="https://ripple.querencia.art">Open Ripple</a>
+            <a href="https://github.com/0xQuerencia/ripple">View source</a>
+          </div>
+        </div>
+        <ProjectPreview name="Ripple" image="/previews/ripple.webp" href="https://ripple.querencia.art" />
       </div>
     </>,
   },
